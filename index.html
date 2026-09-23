@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athenaeum — Pemikiran, Filsafat & Sains</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- FIREBASE SDK (Firestore Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Lora', Georgia, serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121315;
+            --surface-color: #1a1c1e;
+            --border-color: #2a2d32;
+            --text-primary: #e6e4df;
+            --text-secondary: #9a9893;
+            --accent-color: #c9a86a;
+            --accent-hover: #dfbc7a;
+            --danger-color: #e57373;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #fcfbf9;
+            --surface-color: #f4f2ed;
+            --border-color: #e5e2da;
+            --text-primary: #222120;
+            --text-secondary: #6e6c67;
+            --accent-color: #8c6d31;
+            --accent-hover: #6a5223;
+            --danger-color: #c62828;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.7; transition: var(--transition); min-height: 100vh; display: flex; flex-direction: column; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+        h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+        a { color: inherit; text-decoration: none; transition: var(--transition); }
+
+        header { padding: 2.5rem 0 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 3rem; }
+        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; }
+        .site-title { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: -0.5px; font-weight: 600; }
+        .site-title span { color: var(--accent-color); }
+        .nav-controls { display: flex; align-items: center; gap: 1.2rem; }
+        .icon-btn { background: none; border: none; color: var(--text-secondary); font-size: 1rem; cursor: pointer; transition: var(--transition); padding: 0.4rem; border-radius: 4px; }
+        .icon-btn:hover { color: var(--accent-color); }
+        .admin-link { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); opacity: 0.6; cursor: pointer; }
+        .admin-link:hover { opacity: 1; color: var(--accent-color); }
+
+        nav.categories { display: flex; gap: 1.5rem; margin-top: 2rem; overflow-x: auto; padding-bottom: 0.5rem; }
+        .cat-btn { background: none; border: none; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; white-space: nowrap; padding-bottom: 0.2rem; border-bottom: 2px solid transparent; transition: var(--transition); }
+        .cat-btn:hover, .cat-btn.active { color: var(--text-primary); border-bottom-color: var(--accent-color); }
+
+        .search-container { margin-bottom: 2.5rem; position: relative; }
+        .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: var(--transition); }
+        .search-input:focus { border-color: var(--accent-color); }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.85rem; }
+
+        .article-list { display: flex; flex-direction: column; gap: 2.5rem; }
+        .article-card { border-bottom: 1px solid var(--border-color); padding-bottom: 2.5rem; transition: var(--transition); }
+        .article-meta { display: flex; align-items: center; gap: 0.8rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+        .article-meta .category { color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+        .article-title { font-size: 1.6rem; margin-bottom: 0.8rem; cursor: pointer; }
+        .article-title:hover { color: var(--accent-color); }
+        .article-excerpt { font-family: var(--font-serif); color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.6; }
+        .article-footer { display: flex; justify-content: space-between; align-items: center; }
+        .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag { font-size: 0.75rem; background: var(--surface-color); padding: 0.2rem 0.6rem; border-radius: 3px; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        
+        .admin-actions { display: flex; gap: 0.8rem; }
+        .action-btn { background: none; border: none; font-size: 0.8rem; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
+        .action-btn.edit:hover { color: var(--accent-color); }
+        .action-btn.delete:hover { color: var(--danger-color); }
+
+        .full-article { display: none; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; margin-bottom: 2rem; transition: var(--transition); }
+        .back-btn:hover { color: var(--accent-color); }
+        .full-article h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+        .article-content { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.8; margin-top: 2rem; color: var(--text-primary); }
+        .article-content p { margin-bottom: 1.5rem; }
+        .article-content blockquote { border-left: 2px solid var(--accent-color); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--text-secondary); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition); }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box { background: var(--bg-color); border: 1px solid var(--border-color); padding: 2rem; width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .form-control { width: 100%; padding: 0.7rem; background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 4px; outline: none; font-family: var(--font-sans); }
+        .btn { background: var(--accent-color); color: #121315; font-weight: 500; border: none; padding: 0.7rem 1.2rem; border-radius: 4px; cursor: pointer; width: 100%; transition: var(--transition); }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); margin-top: 0.5rem; }
+
+        .admin-panel { display: none; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 3rem; }
+        .admin-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        textarea.form-control { resize: vertical; min-height: 150px; font-family: var(--font-serif); }
+
+        footer { margin-top: auto; padding: 3rem 0 2rem; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.8rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="nav-wrapper">
+                <a href="#" onclick="showHome()" class="site-title">ATHENAEUM<span>.</span></a>
+                <div class="nav-controls">
+                    <button class="icon-btn" id="theme-toggle" title="Ubah Tema"><i class="fa-solid fa-moon"></i></button>
+                    <a class="admin-link" id="admin-trigger" onclick="handleAdminClick()">Admin</a>
+                </div>
+            </div>
+
+            <nav class="categories">
+                <button class="cat-btn active" onclick="filterCategory('All')">Semua Tulisan</button>
+                <button class="cat-btn" onclick="filterCategory('Filsafat')">Filsafat</button>
+                <button class="cat-btn" onclick="filterCategory('Filsafat Sains')">Filsafat Sains</button>
+                <button class="cat-btn" onclick="filterCategory('Catatan Bebas')">Catatan Bebas</button>
+            </nav>
+        </header>
+
+        <!-- ADMIN PANEL -->
+        <section id="admin-panel" class="admin-panel">
+            <div class="admin-panel-header">
+                <h3 id="panel-title">Panel Penulis (Cloud Firestore)</h3>
+                <button class="icon-btn" onclick="logoutAdmin()" title="Keluar"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+            </div>
+            <form id="article-form" onsubmit="saveArticle(event)">
+                <input type="hidden" id="edit-doc-id" value="">
+                <div class="form-group">
+                    <label>Judul Artikel</label>
+                    <input type="text" id="post-title" class="form-control" required placeholder="Tuliskan judul pemikiran...">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="post-category" class="form-control">
+                        <option value="Filsafat">Filsafat</option>
+                        <option value="Filsafat Sains">Filsafat Sains</option>
+                        <option value="Catatan Bebas">Catatan Bebas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tags (pisahkan dengan koma)</label>
+                    <input type="text" id="post-tags" class="form-control" placeholder="Etika, Logika, Epistemologi">
+                </div>
+                <div class="form-group">
+                    <label>Konten Tulisan</label>
+                    <textarea id="post-content" class="form-control" required placeholder="Tuliskan gagasan di sini... Paragraf dibungkus <p>, kutipan dengan blockquote."></textarea>
+                </div>
+                <button type="submit" class="btn" id="submit-btn"><i class="fa-solid fa-paper-plane"></i> Publikasikan Tulisan</button>
+                <button type="button" class="btn btn-secondary" id="cancel-edit-btn" onclick="resetForm()" style="display: none;">Batal Edit</button>
+            </form>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <main id="main-content">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" class="search-input" placeholder="Cari esai, konsep filsafat, atau kata kunci..." oninput="handleSearch()">
+            </div>
+
+            <section id="article-list" class="article-list"></section>
+
+            <article id="full-article" class="full-article">
+                <div class="back-btn" onclick="showHome()">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke daftar tulisan
+                </div>
+                <div class="article-meta">
+                    <span id="view-category" class="category"></span>
+                    <span>•</span>
+                    <span id="view-date"></span>
+                    <span>•</span>
+                    <span id="view-readtime"></span>
+                </div>
+                <h1 id="view-title"></h1>
+                <div class="article-tags" id="view-tags" style="margin-bottom: 2rem;"></div>
+                <div id="view-content" class="article-content"></div>
+            </article>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Athenaeum Platform. Didedikasikan untuk pencarian kebenaran & akal sehat.</p>
+        </footer>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 1rem;">Akses Admin</h3>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" class="form-control" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkHrCM3Zky9ap7EhHk1RpqHyqmEW2HSzo",
+            authDomain: "philosophy-89494.firebaseapp.com",
+            databaseURL: "https://philosophy-89494-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "philosophy-89494",
+            storageBucket: "philosophy-89494.firebasestorage.app",
+            messagingSenderId: "383858509321",
+            appId: "1:383858509321:web:a4fed9064fa1b4d68fdad8",
+            measurementId: "G-PS7VDLM637"
+        };
+
+        // Inisialisasi Firebase & Firestore
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // State Management
+        let articles = [];
+        let isAdminLoggedIn = localStorage.getItem('athenaeum_admin') === 'true';
+        let activeCategory = 'All';
+
+        // Listen Realtime Firestore Update
+        db.collection('articles').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            articles = [];
+            snapshot.forEach((doc) => {
+                articles.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            renderArticles();
+        }, (error) => {
+            console.error("Gagal terhubung ke Firestore:", error);
+        });
+
+        function calcReadTime(text) {
+            const words = text.replace(/<[^>]*>/g, '').split(/\s+/).length;
+            return `${Math.ceil(words / 200)} min read`;
+        }
+
+        function renderArticles(dataToRender = articles) {
+            const listContainer = document.getElementById('article-list');
+            listContainer.innerHTML = '';
+
+            let filtered = dataToRender;
+            if (activeCategory !== 'All') {
+                filtered = filtered.filter(a => a.category === activeCategory);
+            }
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<p style="color: var(--text-secondary); text-align: center; margin: 3rem 0;">Belum ada tulisan dipublikasikan.</p>`;
+                return;
+            }
+
+            filtered.forEach(art => {
+                const readTime = calcReadTime(art.content);
+                const excerpt = art.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...';
+                
+                const adminButtons = isAdminLoggedIn ? `
+                    <div class="admin-actions">
+                        <button class="action-btn edit" onclick="editArticle('${art.id}')" title="Edit Tulisan"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="action-btn delete" onclick="deleteArticle('${art.id}')" title="Hapus Tulisan"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </div>
+                ` : '';
+
+                const card = document.createElement('div');
+                card.className = 'article-card';
+                card.innerHTML = `
+                    <div class="article-meta">
+                        <span class="category">${art.category}</span>
+                        <span>•</span>
+                        <span>${art.date}</span>
+                        <span>•</span>
+                        <span>${readTime}</span>
+                    </div>
+                    <h2 class="article-title" onclick="openArticle('${art.id}')">${art.title}</h2>
+                    <p class="article-excerpt">${excerpt}</p>
+                    <div class="article-footer">
+                        <div class="article-tags">
+                            ${(art.tags || []).map(t => `<span class="tag">#${t}</span>`).join('')}
+                        </div>
+                        ${adminButtons}
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText === cat || (cat === 'All' && btn.innerText === 'Semua Tulisan'));
+            });
+            showHome();
+            renderArticles();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = articles.filter(art => 
+                art.title.toLowerCase().includes(query) || 
+                art.content.toLowerCase().includes(query) ||
+                (art.tags && art.tags.some(t => t.toLowerCase().includes(query)))
+            );
+            renderArticles(filtered);
+        }
+
+        function openArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            document.getElementById('search-input').style.display = 'none';
+            document.getElementById('article-list').style.display = 'none';
+            
+            const fullView = document.getElementById('full-article');
+            document.getElementById('view-category').innerText = art.category;
+            document.getElementById('view-date').innerText = art.date;
+            document.getElementById('view-readtime').innerText = calcReadTime(art.content);
+            document.getElementById('view-title').innerText = art.title;
+            document.getElementById('view-content').innerHTML = art.content;
+            
+            const tagsContainer = document.getElementById('view-tags');
+            tagsContainer.innerHTML = (art.tags || []).map(t => `<span class="tag">#${t}</span>`).join('');
+
+            fullView.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHome() {
+            document.getElementById('full-article').style.display = 'none';
+            document.getElementById('search-input').style.display = 'block';
+            document.getElementById('article-list').style.display = 'flex';
+            renderArticles();
+        }
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            themeBtn.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+        });
+
+        // Admin Management
+        function handleAdminClick() {
+            if (isAdminLoggedIn) {
+                toggleAdminPanel();
+            } else {
+                document.getElementById('login-modal').classList.add('active');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            // Kredensial Admin Baru
+            if (user === 'michoahmad02' && pass === 'Pujianto123') {
+                isAdminLoggedIn = true;
+                localStorage.setItem('athenaeum_admin', 'true');
+                document.getElementById('login-modal').classList.remove('active');
+                toggleAdminPanel();
+                renderArticles();
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem('athenaeum_admin');
+            document.getElementById('admin-panel').style.display = 'none';
+            resetForm();
+            renderArticles();
+            alert('Berhasil Keluar.');
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if(panel.style.display === 'block') {
+                panel.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('article-form').reset();
+            document.getElementById('edit-doc-id').value = '';
+            document.getElementById('panel-title').innerText = 'Panel Penulis (Cloud Firestore)';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publikasikan Tulisan';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+        }
+
+        function editArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            document.getElementById('edit-doc-id').value = art.id;
+            document.getElementById('post-title').value = art.title;
+            document.getElementById('post-category').value = art.category;
+            document.getElementById('post-tags').value = (art.tags || []).join(', ');
+            document.getElementById('post-content').value = art.content;
+
+            document.getElementById('panel-title').innerText = 'Edit Artikel';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Simpan Perubahan';
+            document.getElementById('cancel-edit-btn').style.display = 'block';
+
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteArticle(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus tulisan ini secara permanen?')) {
+                db.collection('articles').doc(id).delete()
+                    .then(() => {
+                        alert('Artikel berhasil dihapus!');
+                    })
+                    .catch((error) => {
+                        alert('Gagal menghapus: ' + error.message);
+                    });
+            }
+        }
+
+        function saveArticle(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const docId = document.getElementById('edit-doc-id').value;
+            
+            btn.disabled = true;
+            btn.innerText = docId ? "Menyimpan Perubahan..." : "Memublikasikan...";
+
+            const title = document.getElementById('post-title').value;
+            const category = document.getElementById('post-category').value;
+            const tags = document.getElementById('post-tags').value.split(',').map(t => t.trim()).filter(t => t !== "");
+            const content = document.getElementById('post-content').value;
+
+            if (docId) {
+                // Update Tulisan yang Ada
+                db.collection('articles').doc(docId).update({
+                    title: title,
+                    category: category,
+                    content: content,
+                    tags: tags
+                })
+                .then(() => {
+                    alert('Artikel berhasil diperbarui!');
+                    resetForm();
+                    btn.disabled = false;
+                    showHome();
+                })
+                .catch((error) => {
+                    alert('Gagal memperbarui: ' + error.message);
+                    btn.disabled = false;
+                });
+            } else {
+                // Tambah Tulisan Baru
+                db.collection('articles').add({
+                    title: title,
+                    category: category,
+                    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    content: content,
+                    tags: tags,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                .then(() => {
+                    alert('Artikel Berhasil Dipublikasikan ke Firestore!');
+                    resetForm();
+                    btn.disabled = false;
+                    showHome();
+                })
+                .catch((error) => {
+                    alert('Gagal menyimpan ke Firestore: ' + error.message);
+                    btn.disabled = false;
+                });
+            }
+        }
+
+        document.getElementById('login-modal').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('login-modal')) {
+                document.getElementById('login-modal').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
