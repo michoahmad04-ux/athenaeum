@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athenaeum — Pemikiran, Filsafat & Sains</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- FIREBASE SDK (Firestore Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Lora', Georgia, serif;
+        }
+
+        /* Terang: putih, biru, emas */
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --surface-color: #f3f7ff;
+            --border-color: #d9e4f7;
+            --text-primary: #12285a;
+            --text-secondary: #5b6c8f;
+            --blue: #1e4fd0;
+            --blue-hover: #163ea8;
+            --gold: #c8962e;
+            --gold-text: #9a6f12;
+            --gold-soft: #fbf3df;
+            --danger-color: #c62828;
+            --shadow: 0 10px 30px rgba(30, 79, 208, 0.12);
+        }
+
+        /* Gelap: navy, biru terang, emas */
+        [data-theme="dark"] {
+            --bg-color: #0a1530;
+            --surface-color: #101f42;
+            --border-color: #23386a;
+            --text-primary: #eaf0ff;
+            --text-secondary: #9fb1d6;
+            --blue: #5b8cff;
+            --blue-hover: #82a6ff;
+            --gold: #e4b84f;
+            --gold-text: #e4b84f;
+            --gold-soft: #2a2a2a;
+            --danger-color: #ef8a8a;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-primary); font-family: var(--font-sans); line-height: 1.7; transition: background-color .3s, color .3s; min-height: 100vh; display: flex; flex-direction: column; }
+        .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; width: 100%; }
+        h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 500; color: var(--text-primary); line-height: 1.3; }
+        a { color: inherit; text-decoration: none; transition: var(--transition); }
+        :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+        .top-bar { height: 5px; background: linear-gradient(90deg, var(--blue) 0%, var(--blue) 62%, var(--gold) 62%, var(--gold) 100%); }
+
+        header { padding: 2rem 0 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 2rem; }
+        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .site-title { font-family: var(--font-serif); font-size: 1.6rem; letter-spacing: -0.3px; font-weight: 600; color: var(--blue); }
+        .site-title span { color: var(--gold); }
+        .nav-controls { display: flex; align-items: center; gap: 0.9rem; }
+        .icon-btn { background: none; border: none; color: var(--text-secondary); font-size: 1rem; cursor: pointer; transition: var(--transition); padding: 0.4rem; border-radius: 6px; font-family: var(--font-sans); }
+        .icon-btn:hover { color: var(--blue); background: var(--surface-color); }
+        .admin-link { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; color: var(--blue); border: 1px solid var(--border-color); padding: 0.3rem 0.8rem 0.3rem 0.4rem; border-radius: 999px; cursor: pointer; background: var(--surface-color); }
+        .admin-link:hover { border-color: var(--gold); }
+        .admin-link.no-avatar { padding-left: 0.8rem; }
+
+        /* Avatar */
+        .avatar { border-radius: 50%; object-fit: cover; background: linear-gradient(135deg, var(--blue), var(--gold)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-weight: 600; flex-shrink: 0; overflow: hidden; }
+        .avatar.sm { width: 26px; height: 26px; font-size: 0.8rem; }
+        .avatar.md { width: 36px; height: 36px; font-size: 1rem; }
+        .avatar.lg { width: 64px; height: 64px; font-size: 1.6rem; }
+        .avatar.xl { width: 96px; height: 96px; font-size: 2.2rem; }
+        .avatar-ring { box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--gold); }
+
+        nav.categories { display: flex; gap: 1.5rem; margin-top: 1.8rem; overflow-x: auto; padding-bottom: 0.5rem; }
+        .cat-btn { background: none; border: none; font-family: var(--font-sans); font-size: 0.9rem; color: var(--text-secondary); cursor: pointer; white-space: nowrap; padding-bottom: 0.2rem; border-bottom: 2px solid transparent; transition: var(--transition); }
+        .cat-btn:hover { color: var(--blue); }
+        .cat-btn.active { color: var(--blue); font-weight: 600; border-bottom-color: var(--gold); }
+
+        /* Author strip */
+        .author-strip { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; background: var(--surface-color); border: 1px solid var(--border-color); border-left: 4px solid var(--gold); border-radius: 8px; margin-bottom: 2rem; }
+        .author-strip .name { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; color: var(--text-primary); }
+        .author-strip .bio { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .search-container { margin-bottom: 2.5rem; position: relative; }
+        .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: var(--transition); }
+        .search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,79,208,.12); }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 0.85rem; }
+
+        .article-list { display: flex; flex-direction: column; gap: 2.5rem; }
+        .article-card { border-bottom: 1px solid var(--border-color); padding-bottom: 2.5rem; }
+        .card-cover { width: 100%; aspect-ratio: 16 / 7; object-fit: cover; border-radius: 10px; margin-bottom: 1.1rem; cursor: pointer; border: 1px solid var(--border-color); display: block; }
+        .article-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+        .article-meta .category { color: var(--gold-text); font-weight: 600; }
+        .article-meta .by { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .article-title { font-size: 1.6rem; margin-bottom: 0.8rem; cursor: pointer; color: var(--text-primary); }
+        .article-title:hover { color: var(--blue); }
+        .article-excerpt { font-family: var(--font-serif); color: var(--text-secondary); font-size: 0.98rem; margin-bottom: 1rem; line-height: 1.7; }
+        .article-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .article-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tag { font-size: 0.75rem; background: var(--surface-color); padding: 0.2rem 0.6rem; border-radius: 999px; color: var(--blue); border: 1px solid var(--border-color); }
+
+        .admin-actions { display: flex; gap: 0.8rem; }
+        .action-btn { background: none; border: none; font-size: 0.8rem; cursor: pointer; color: var(--text-secondary); transition: var(--transition); font-family: var(--font-sans); }
+        .action-btn.edit:hover { color: var(--blue); }
+        .action-btn.delete:hover { color: var(--danger-color); }
+
+        .full-article { display: none; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; margin-bottom: 2rem; transition: var(--transition); }
+        .back-btn:hover { color: var(--blue); }
+        .full-article h1 { font-size: 2.2rem; margin-bottom: 1rem; }
+        .full-cover { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; margin: 1.2rem 0 0.5rem; border: 1px solid var(--border-color); display: block; }
+        .byline { display: flex; align-items: center; gap: 0.7rem; margin: 1rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+        .byline strong { color: var(--text-primary); font-weight: 600; }
+        .article-content { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.85; margin-top: 2rem; color: var(--text-primary); }
+        .article-content p { margin-bottom: 1.5rem; }
+        .article-content blockquote { border-left: 3px solid var(--gold); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--text-secondary); }
+        .article-figure { margin: 2rem 0; }
+        .article-figure img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 0 auto; border: 1px solid var(--border-color); }
+        .author-card { display: flex; gap: 1.2rem; align-items: center; margin-top: 3rem; padding: 1.4rem; background: var(--surface-color); border: 1px solid var(--border-color); border-top: 3px solid var(--gold); border-radius: 10px; }
+        .author-card .label { font-size: 0.78rem; color: var(--text-secondary); }
+        .author-card .name { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; }
+        .author-card .bio { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 21, 48, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition); padding: 1rem; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box { background: var(--bg-color); border: 1px solid var(--border-color); border-top: 4px solid var(--gold); padding: 2rem; width: 100%; max-width: 400px; border-radius: 10px; box-shadow: var(--shadow); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label.lbl { display: block; font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.4rem; font-weight: 500; }
+        .form-group small { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.35rem; }
+        .form-control { width: 100%; padding: 0.7rem; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; outline: none; font-family: var(--font-sans); transition: var(--transition); }
+        .form-control:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,79,208,.12); }
+        .btn { background: var(--blue); color: #fff; font-weight: 500; border: none; padding: 0.75rem 1.2rem; border-radius: 6px; cursor: pointer; width: 100%; transition: var(--transition); font-family: var(--font-sans); font-size: 0.9rem; }
+        .btn:hover { background: var(--blue-hover); }
+        .btn:disabled { opacity: 0.6; cursor: wait; }
+        .btn-gold { background: var(--gold); color: #1d1a10; }
+        .btn-gold:hover { background: var(--gold-text); color: #fff; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); margin-top: 0.5rem; }
+        .btn-secondary:hover { background: var(--surface-color); color: var(--blue); }
+
+        .admin-panel { display: none; background: var(--surface-color); border: 1px solid var(--border-color); border-top: 4px solid var(--gold); border-radius: 10px; padding: 1.6rem; margin-bottom: 3rem; }
+        .admin-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); gap: 1rem; }
+        .admin-tabs { display: flex; gap: 0.4rem; margin-bottom: 1.5rem; background: var(--bg-color); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; background: none; border: none; padding: 0.55rem 0.5rem; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: var(--transition); }
+        .tab-btn.active { background: var(--blue); color: #fff; font-weight: 500; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        textarea.form-control { resize: vertical; min-height: 220px; font-family: var(--font-serif); line-height: 1.7; }
+
+        /* Upload */
+        .upload-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+        .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--bg-color); border: 1.5px dashed var(--blue); color: var(--blue); padding: 0.55rem 1rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: var(--transition); font-weight: 500; }
+        .upload-btn:hover { background: var(--gold-soft); border-color: var(--gold); color: var(--gold-text); }
+        .link-btn { background: none; border: none; color: var(--danger-color); font-size: 0.8rem; cursor: pointer; font-family: var(--font-sans); }
+        .cover-preview { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; margin-top: 0.8rem; border: 1px solid var(--border-color); display: none; }
+        .image-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.8rem; margin-top: 0.8rem; }
+        .thumb { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .thumb img { width: 100%; height: 80px; object-fit: cover; display: block; }
+        .thumb-actions { display: flex; justify-content: space-between; padding: 0.3rem 0.5rem; }
+        .thumb-actions button { background: none; border: none; font-size: 0.75rem; cursor: pointer; font-family: var(--font-sans); }
+        .thumb-actions .ins { color: var(--blue); font-weight: 600; }
+        .thumb-actions .del { color: var(--danger-color); }
+        .profile-row { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+
+        /* Category manager */
+        .cat-row { display: flex; gap: 0.4rem; align-items: center; margin-bottom: 0.6rem; }
+        .cat-row .form-control { flex: 1; min-width: 0; }
+        .mini-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 6px; cursor: pointer; flex-shrink: 0; transition: var(--transition); }
+        .mini-btn:hover { color: var(--blue); border-color: var(--blue); }
+        .mini-btn.save:hover { color: #fff; background: var(--blue); }
+        .mini-btn.del:hover { color: var(--danger-color); border-color: var(--danger-color); }
+        .mini-btn:disabled { opacity: .35; cursor: default; }
+
+        footer { margin-top: auto; padding: 3rem 0 2rem; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.8rem; color: var(--text-secondary); }
+        footer::before { content: ''; display: block; width: 48px; height: 3px; background: var(--gold); margin: 0 auto 1.2rem; border-radius: 2px; }
+
+        @media (max-width: 560px) {
+            .full-article h1 { font-size: 1.75rem; }
+            .article-title { font-size: 1.35rem; }
+            .author-card { flex-direction: column; text-align: center; }
+        }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="nav-wrapper">
+                <a href="#" onclick="showHome(); return false;" class="site-title">Athenaeum<span>.</span></a>
+                <div class="nav-controls">
+                    <button class="icon-btn" id="theme-toggle" title="Ubah Tema"><i class="fa-solid fa-moon"></i></button>
+                    <a class="admin-link no-avatar" id="admin-trigger" onclick="handleAdminClick()" role="button" tabindex="0"><span id="admin-trigger-avatar"></span><span>Admin</span></a>
+                </div>
+            </div>
+            <nav class="categories" id="category-nav"></nav>
+        </header>
+
+        <!-- ADMIN PANEL -->
+        <section id="admin-panel" class="admin-panel">
+            <div class="admin-panel-header">
+                <h3 id="panel-title">Panel Penulis</h3>
+                <button class="icon-btn" onclick="logoutAdmin()" title="Keluar"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button type="button" class="tab-btn active" data-tab="tab-post" onclick="switchTab('tab-post')"><i class="fa-solid fa-pen-nib"></i> Tulisan</button>
+                <button type="button" class="tab-btn" data-tab="tab-cats" onclick="switchTab('tab-cats')"><i class="fa-solid fa-list"></i> Kategori</button>
+                <button type="button" class="tab-btn" data-tab="tab-profile" onclick="switchTab('tab-profile')"><i class="fa-solid fa-user"></i> Profil</button>
+            </div>
+
+            <!-- TAB: TULISAN -->
+            <div id="tab-post" class="tab-pane active">
+                <form id="article-form" onsubmit="saveArticle(event)">
+                    <input type="hidden" id="edit-doc-id" value="">
+                    <div class="form-group">
+                        <label class="lbl" for="post-title">Judul Artikel</label>
+                        <input type="text" id="post-title" class="form-control" required placeholder="Tuliskan judul pemikiran...">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="post-category">Kategori</label>
+                        <select id="post-category" class="form-control"></select>
+                        <small>Daftar kategori bisa diubah di tab Kategori.</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="post-tags">Tags (pisahkan dengan koma)</label>
+                        <input type="text" id="post-tags" class="form-control" placeholder="Etika, Logika, Epistemologi">
+                    </div>
+
+                    <div class="form-group">
+                        <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.4rem;font-weight:500;">Foto Sampul (opsional)</span>
+                        <div class="upload-row">
+                            <label class="upload-btn" for="cover-file"><i class="fa-solid fa-image"></i> Pilih foto sampul</label>
+                            <input type="file" id="cover-file" accept="image/*" hidden onchange="handleCoverFile(this)">
+                            <button type="button" class="link-btn" id="cover-remove" onclick="removeCover()" style="display:none;"><i class="fa-solid fa-trash"></i> Hapus sampul</button>
+                        </div>
+                        <img id="cover-preview" class="cover-preview" alt="Pratinjau sampul">
+                    </div>
+
+                    <div class="form-group">
+                        <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.4rem;font-weight:500;">Foto di dalam Tulisan</span>
+                        <div class="upload-row">
+                            <label class="upload-btn" for="inline-files"><i class="fa-solid fa-images"></i> Tambah foto</label>
+                            <input type="file" id="inline-files" accept="image/*" multiple hidden onchange="handleInlineFiles(this)">
+                        </div>
+                        <div id="image-gallery" class="image-gallery"></div>
+                        <small>Letakkan kursor di isi tulisan, lalu tekan "Sisipkan" pada foto yang diinginkan.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="lbl" for="post-content">Konten Tulisan</label>
+                        <textarea id="post-content" class="form-control" required placeholder="Tuliskan gagasan di sini. Pisahkan paragraf dengan satu baris kosong."></textarea>
+                        <small>Boleh juga memakai HTML, misalnya &lt;p&gt;, &lt;blockquote&gt;, &lt;em&gt;.</small>
+                    </div>
+                    <button type="submit" class="btn" id="submit-btn"><i class="fa-solid fa-paper-plane"></i> Publikasikan Tulisan</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn" onclick="resetForm()" style="display: none;">Batal Edit</button>
+                </form>
+            </div>
+
+            <!-- TAB: KATEGORI -->
+            <div id="tab-cats" class="tab-pane">
+                <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Ubah nama, urutkan, hapus, atau tambah kategori. Mengubah nama juga memperbarui semua tulisan di kategori itu.</p>
+                <div id="cat-manager"></div>
+                <div class="cat-row" style="margin-top:1rem;">
+                    <input type="text" id="new-cat-input" class="form-control" placeholder="Nama kategori baru, misalnya Etika" onkeydown="if(event.key==='Enter'){event.preventDefault();addCategory();}">
+                    <button type="button" class="btn btn-gold" style="width:auto;" onclick="addCategory()"><i class="fa-solid fa-plus"></i> Tambah</button>
+                </div>
+            </div>
+
+            <!-- TAB: PROFIL -->
+            <div id="tab-profile" class="tab-pane">
+                <form onsubmit="saveProfile(event)">
+                    <div class="form-group">
+                        <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.6rem;font-weight:500;">Foto Profil</span>
+                        <div class="profile-row">
+                            <span id="profile-preview"></span>
+                            <div class="upload-row">
+                                <label class="upload-btn" for="avatar-file"><i class="fa-solid fa-camera"></i> Pilih foto</label>
+                                <input type="file" id="avatar-file" accept="image/*" hidden onchange="handleAvatarFile(this)">
+                                <button type="button" class="link-btn" id="avatar-remove" onclick="removeAvatar()" style="display:none;"><i class="fa-solid fa-trash"></i> Hapus foto</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="profile-name">Nama Penulis</label>
+                        <input type="text" id="profile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di setiap tulisan">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="profile-bio">Bio Singkat (opsional)</label>
+                        <input type="text" id="profile-bio" class="form-control" maxlength="160" placeholder="Misalnya: Mahasiswa yang gemar menelusuri filsafat dan sains">
+                    </div>
+                    <button type="submit" class="btn" id="profile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- MAIN CONTENT -->
+        <main id="main-content">
+            <div id="author-strip"></div>
+
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" class="search-input" placeholder="Cari esai, konsep filsafat, atau kata kunci..." oninput="handleSearch()">
+            </div>
+
+            <section id="article-list" class="article-list"></section>
+
+            <article id="full-article" class="full-article">
+                <div class="back-btn" onclick="showHome()">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke daftar tulisan
+                </div>
+                <div class="article-meta">
+                    <span id="view-category" class="category"></span>
+                    <span>•</span>
+                    <span id="view-date"></span>
+                    <span>•</span>
+                    <span id="view-readtime"></span>
+                </div>
+                <h1 id="view-title"></h1>
+                <div class="byline" id="view-byline"></div>
+                <div class="article-tags" id="view-tags" style="margin-bottom: 1rem;"></div>
+                <img id="view-cover" class="full-cover" alt="" style="display:none;">
+                <div id="view-content" class="article-content"></div>
+                <div id="view-author-card"></div>
+            </article>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Athenaeum Platform. Didedikasikan untuk pencarian kebenaran & akal sehat.</p>
+        </footer>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 1rem;">Akses Admin</h3>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="lbl" for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyBkHrCM3Zky9ap7EhHk1RpqHyqmEW2HSzo",
+            authDomain: "philosophy-89494.firebaseapp.com",
+            databaseURL: "https://philosophy-89494-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "philosophy-89494",
+            storageBucket: "philosophy-89494.firebasestorage.app",
+            messagingSenderId: "383858509321",
+            appId: "1:383858509321:web:a4fed9064fa1b4d68fdad8",
+            measurementId: "G-PS7VDLM637"
+        };
+
+        // Inisialisasi Firebase & Firestore
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ---------- State ----------
+        const DEFAULT_CATEGORIES = ['Filsafat', 'Filsafat Sains', 'Catatan Bebas'];
+        const MAX_DOC_CHARS = 900000; // batas aman dokumen Firestore (~1 MB)
+
+        let articles = [];
+        let categories = [...DEFAULT_CATEGORIES];
+        let profile = { name: '', bio: '', photo: '' };
+        let isAdminLoggedIn = localStorage.getItem('athenaeum_admin') === 'true';
+        let activeCategory = 'All';
+
+        // state form
+        let formCover = '';
+        let formImages = [];      // [{id, src}]
+        let profilePhotoDraft = '';
+
+        // ---------- Helpers ----------
+        function esc(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function authorName() { return profile.name || 'Penulis'; }
+        function avatarHTML(size = 'md', ring = false) {
+            const cls = `avatar ${size}${ring ? ' avatar-ring' : ''}`;
+            if (profile.photo) return `<img class="${cls}" src="${profile.photo}" alt="${esc(authorName())}">`;
+            return `<span class="${cls}">${esc(authorName().charAt(0).toUpperCase())}</span>`;
+        }
+        function stripForText(text) {
+            return (text || '').replace(/\[gambar:\w+\]/g, ' ').replace(/<[^>]*>/g, ' ');
+        }
+        function calcReadTime(text) {
+            const words = stripForText(text).split(/\s+/).filter(Boolean).length;
+            return `${Math.max(1, Math.ceil(words / 200))} min read`;
+        }
+        function figureHTML(src) {
+            return `<figure class="article-figure"><img src="${src}" alt="Foto dalam tulisan" loading="lazy"></figure>`;
+        }
+        function renderContent(art) {
+            const map = {};
+            (art.images || []).forEach(im => { map[im.id] = im.src; });
+            const raw = art.content || '';
+            const hasBlock = /<(p|div|h[1-6]|ul|ol|blockquote|figure)[\s>]/i.test(raw);
+            if (hasBlock) {
+                return raw.replace(/\[gambar:(\w+)\]/g, (_, id) => map[id] ? figureHTML(map[id]) : '');
+            }
+            return raw.split(/\n{2,}/).map(p => p.trim()).filter(Boolean).map(p => {
+                const m = p.match(/^\[gambar:(\w+)\]$/);
+                if (m) return map[m[1]] ? figureHTML(map[m[1]]) : '';
+                return '<p>' + p.replace(/\[gambar:(\w+)\]/g, '').replace(/\n/g, '<br>') + '</p>';
+            }).join('');
+        }
+
+        // Kompres gambar di browser supaya muat di Firestore
+        function compressImage(file, maxSize, quality, square = false) {
+            return new Promise((resolve, reject) => {
+                if (!file || !file.type.startsWith('image/')) return reject(new Error('File harus berupa gambar.'));
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('Gagal membaca file.'));
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('Gambar tidak bisa dibuka.'));
+                    img.onload = () => {
+                        let sx = 0, sy = 0, sw = img.width, sh = img.height, cw, ch;
+                        if (square) {
+                            const s = Math.min(sw, sh);
+                            sx = (sw - s) / 2; sy = (sh - s) / 2; sw = sh = s;
+                            cw = ch = Math.min(maxSize, s);
+                        } else {
+                            const scale = Math.min(1, maxSize / Math.max(sw, sh));
+                            cw = Math.round(sw * scale); ch = Math.round(sh * scale);
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = cw; canvas.height = ch;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(0, 0, cw, ch);
+                        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ---------- Firestore listeners ----------
+        db.collection('articles').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+            articles = [];
+            snapshot.forEach((doc) => articles.push({ id: doc.id, ...doc.data() }));
+            renderArticles();
+        }, (error) => console.error('Gagal terhubung ke Firestore:', error));
+
+        db.collection('settings').doc('categories').onSnapshot((doc) => {
+            const list = doc.exists ? doc.data().list : null;
+            categories = (Array.isArray(list) && list.length) ? list : [...DEFAULT_CATEGORIES];
+            renderCategoryNav();
+            renderCategoryManager();
+            fillCategorySelect();
+            renderArticles();
+        }, (error) => console.error('Gagal memuat kategori:', error));
+
+        db.collection('settings').doc('profile').onSnapshot((doc) => {
+            const d = doc.exists ? doc.data() : {};
+            profile = { name: d.name || '', bio: d.bio || '', photo: d.photo || '' };
+            renderProfileEverywhere();
+            renderArticles();
+        }, (error) => console.error('Gagal memuat profil:', error));
+
+        function settingsError(err) {
+            alert('Gagal menyimpan: ' + err.message + '\n\nPastikan aturan Firestore mengizinkan tulis ke koleksi "settings".');
+        }
+
+        // ---------- Render ----------
+        function renderProfileEverywhere() {
+            // tombol admin di header
+            const trigger = document.getElementById('admin-trigger');
+            const av = document.getElementById('admin-trigger-avatar');
+            if (profile.photo || profile.name) {
+                av.innerHTML = avatarHTML('sm');
+                trigger.classList.remove('no-avatar');
+            } else {
+                av.innerHTML = '';
+                trigger.classList.add('no-avatar');
+            }
+            // kartu penulis di beranda
+            const strip = document.getElementById('author-strip');
+            strip.innerHTML = (profile.name || profile.photo) ? `
+                <div class="author-strip">
+                    ${avatarHTML('lg', true)}
+                    <div>
+                        <div class="name">${esc(authorName())}</div>
+                        ${profile.bio ? `<div class="bio">${esc(profile.bio)}</div>` : ''}
+                    </div>
+                </div>` : '';
+            // form profil
+            if (document.activeElement !== document.getElementById('profile-name')) {
+                document.getElementById('profile-name').value = profile.name;
+            }
+            if (document.activeElement !== document.getElementById('profile-bio')) {
+                document.getElementById('profile-bio').value = profile.bio;
+            }
+            profilePhotoDraft = profile.photo;
+            renderProfilePreview();
+        }
+
+        function renderProfilePreview() {
+            const name = document.getElementById('profile-name').value || profile.name || 'P';
+            const el = document.getElementById('profile-preview');
+            el.innerHTML = profilePhotoDraft
+                ? `<img class="avatar xl avatar-ring" src="${profilePhotoDraft}" alt="Foto profil">`
+                : `<span class="avatar xl avatar-ring">${esc(name.charAt(0).toUpperCase())}</span>`;
+            document.getElementById('avatar-remove').style.display = profilePhotoDraft ? 'inline-block' : 'none';
+        }
+
+        function renderCategoryNav() {
+            const nav = document.getElementById('category-nav');
+            nav.innerHTML = '';
+            const make = (label, value) => {
+                const b = document.createElement('button');
+                b.className = 'cat-btn' + (activeCategory === value ? ' active' : '');
+                b.textContent = label;
+                b.onclick = () => filterCategory(value);
+                nav.appendChild(b);
+            };
+            make('Semua Tulisan', 'All');
+            categories.forEach(c => make(c, c));
+        }
+
+        function fillCategorySelect(selected) {
+            const sel = document.getElementById('post-category');
+            const current = selected ?? sel.value;
+            sel.innerHTML = categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+            if (current && !categories.includes(current)) {
+                sel.insertAdjacentHTML('beforeend', `<option value="${esc(current)}">${esc(current)} (sudah dihapus)</option>`);
+            }
+            if (current) sel.value = current;
+        }
+
+        function renderCategoryManager() {
+            const box = document.getElementById('cat-manager');
+            box.innerHTML = '';
+            categories.forEach((cat, i) => {
+                const row = document.createElement('div');
+                row.className = 'cat-row';
+                row.innerHTML = `
+                    <input type="text" class="form-control" id="cat-input-${i}" value="${esc(cat)}" maxlength="40" onkeydown="if(event.key==='Enter'){event.preventDefault();renameCategory(${i});}">
+                    <button type="button" class="mini-btn" title="Naikkan" onclick="moveCategory(${i}, -1)" ${i === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
+                    <button type="button" class="mini-btn" title="Turunkan" onclick="moveCategory(${i}, 1)" ${i === categories.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
+                    <button type="button" class="mini-btn save" title="Simpan nama" onclick="renameCategory(${i})"><i class="fa-solid fa-check"></i></button>
+                    <button type="button" class="mini-btn del" title="Hapus" onclick="deleteCategory(${i})"><i class="fa-solid fa-trash"></i></button>`;
+                box.appendChild(row);
+            });
+        }
+
+        function renderArticles(dataToRender = articles) {
+            const listContainer = document.getElementById('article-list');
+            listContainer.innerHTML = '';
+
+            let filtered = dataToRender;
+            if (activeCategory !== 'All') filtered = filtered.filter(a => a.category === activeCategory);
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `<p style="color: var(--text-secondary); text-align: center; margin: 3rem 0;">Belum ada tulisan di sini.</p>`;
+                return;
+            }
+
+            filtered.forEach(art => {
+                const readTime = calcReadTime(art.content);
+                const plain = stripForText(art.content).replace(/\s+/g, ' ').trim();
+                const excerpt = esc(plain.substring(0, 160)) + (plain.length > 160 ? '...' : '');
+
+                const adminButtons = isAdminLoggedIn ? `
+                    <div class="admin-actions">
+                        <button class="action-btn edit" onclick="editArticle('${art.id}')" title="Edit Tulisan"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="action-btn delete" onclick="deleteArticle('${art.id}')" title="Hapus Tulisan"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </div>` : '';
+
+                const card = document.createElement('div');
+                card.className = 'article-card';
+                card.innerHTML = `
+                    ${art.cover ? `<img class="card-cover" src="${art.cover}" alt="" onclick="openArticle('${art.id}')">` : ''}
+                    <div class="article-meta">
+                        <span class="category">${esc(art.category)}</span>
+                        <span>•</span>
+                        <span>${esc(art.date)}</span>
+                        <span>•</span>
+                        <span>${readTime}</span>
+                        <span>•</span>
+                        <span class="by">${avatarHTML('sm')} ${esc(authorName())}</span>
+                    </div>
+                    <h2 class="article-title" onclick="openArticle('${art.id}')">${esc(art.title)}</h2>
+                    <p class="article-excerpt">${excerpt}</p>
+                    <div class="article-footer">
+                        <div class="article-tags">
+                            ${(art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('')}
+                        </div>
+                        ${adminButtons}
+                    </div>`;
+                listContainer.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            activeCategory = cat;
+            renderCategoryNav();
+            showHome();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = articles.filter(art =>
+                (art.title || '').toLowerCase().includes(query) ||
+                stripForText(art.content).toLowerCase().includes(query) ||
+                (art.tags && art.tags.some(t => t.toLowerCase().includes(query)))
+            );
+            renderArticles(filtered);
+        }
+
+        function openArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            document.getElementById('search-input').parentElement.style.display = 'none';
+            document.getElementById('author-strip').style.display = 'none';
+            document.getElementById('article-list').style.display = 'none';
+
+            document.getElementById('view-category').innerText = art.category;
+            document.getElementById('view-date').innerText = art.date;
+            document.getElementById('view-readtime').innerText = calcReadTime(art.content);
+            document.getElementById('view-title').innerText = art.title;
+            document.getElementById('view-content').innerHTML = renderContent(art);
+            document.getElementById('view-byline').innerHTML = `${avatarHTML('md')} <span>Ditulis oleh <strong>${esc(authorName())}</strong></span>`;
+            document.getElementById('view-tags').innerHTML = (art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+
+            const cover = document.getElementById('view-cover');
+            if (art.cover) { cover.src = art.cover; cover.style.display = 'block'; } else { cover.style.display = 'none'; }
+
+            document.getElementById('view-author-card').innerHTML = `
+                <div class="author-card">
+                    ${avatarHTML('xl', true)}
+                    <div>
+                        <div class="label">Penulis</div>
+                        <div class="name">${esc(authorName())}</div>
+                        ${profile.bio ? `<div class="bio">${esc(profile.bio)}</div>` : ''}
+                    </div>
+                </div>`;
+
+            document.getElementById('full-article').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHome() {
+            document.getElementById('full-article').style.display = 'none';
+            document.getElementById('search-input').parentElement.style.display = 'block';
+            document.getElementById('author-strip').style.display = 'block';
+            document.getElementById('article-list').style.display = 'flex';
+            document.getElementById('search-input').value = '';
+            renderArticles();
+        }
+
+        // ---------- Tema ----------
+        const themeBtn = document.getElementById('theme-toggle');
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            themeBtn.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+            localStorage.setItem('athenaeum_theme', theme);
+        }
+        applyTheme(localStorage.getItem('athenaeum_theme') || 'light');
+        themeBtn.addEventListener('click', () => {
+            applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        // ---------- Admin ----------
+        function handleAdminClick() {
+            if (isAdminLoggedIn) toggleAdminPanel();
+            else document.getElementById('login-modal').classList.add('active');
+        }
+        document.getElementById('admin-trigger').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleAdminClick(); }
+        });
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim().toLowerCase();
+            const pass = document.getElementById('password').value.trim();
+
+            // Kredensial Admin
+            if (user === 'michoahmad02' && pass === 'Pujianto123') {
+                isAdminLoggedIn = true;
+                localStorage.setItem('athenaeum_admin', 'true');
+                document.getElementById('login-modal').classList.remove('active');
+                toggleAdminPanel();
+                renderArticles();
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            localStorage.removeItem('athenaeum_admin');
+            document.getElementById('admin-panel').style.display = 'none';
+            resetForm();
+            renderArticles();
+            alert('Berhasil keluar.');
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+            if (panel.style.display === 'block') panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === id));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+        }
+
+        // ---------- Profil admin ----------
+        async function handleAvatarFile(input) {
+            const file = input.files[0];
+            input.value = '';
+            if (!file) return;
+            try {
+                profilePhotoDraft = await compressImage(file, 320, 0.85, true);
+                renderProfilePreview();
+            } catch (err) { alert(err.message); }
+        }
+        function removeAvatar() { profilePhotoDraft = ''; renderProfilePreview(); }
+        document.getElementById('profile-name').addEventListener('input', renderProfilePreview);
+
+        function saveProfile(e) {
+            e.preventDefault();
+            const btn = document.getElementById('profile-btn');
+            btn.disabled = true;
+            const data = {
+                name: document.getElementById('profile-name').value.trim(),
+                bio: document.getElementById('profile-bio').value.trim(),
+                photo: profilePhotoDraft
+            };
+            db.collection('settings').doc('profile').set(data)
+                .then(() => alert('Profil berhasil disimpan!'))
+                .catch(settingsError)
+                .finally(() => { btn.disabled = false; });
+        }
+
+        // ---------- Kategori ----------
+        function saveCategories(list) {
+            return db.collection('settings').doc('categories').set({ list });
+        }
+
+        function addCategory() {
+            const input = document.getElementById('new-cat-input');
+            const name = input.value.trim();
+            if (!name) return;
+            if (categories.some(c => c.toLowerCase() === name.toLowerCase())) return alert('Kategori itu sudah ada.');
+            saveCategories([...categories, name]).then(() => { input.value = ''; }).catch(settingsError);
+        }
+
+        function renameCategory(i) {
+            const oldName = categories[i];
+            const newName = document.getElementById('cat-input-' + i).value.trim();
+            if (!newName || newName === oldName) return;
+            if (categories.some((c, idx) => idx !== i && c.toLowerCase() === newName.toLowerCase())) return alert('Kategori itu sudah ada.');
+
+            const list = [...categories];
+            list[i] = newName;
+            db.collection('articles').where('category', '==', oldName).get().then(snap => {
+                const batch = db.batch();
+                snap.forEach(doc => batch.update(doc.ref, { category: newName }));
+                batch.set(db.collection('settings').doc('categories'), { list });
+                return batch.commit();
+            }).then(() => {
+                if (activeCategory === oldName) activeCategory = newName;
+            }).catch(settingsError);
+        }
+
+        function moveCategory(i, dir) {
+            const j = i + dir;
+            if (j < 0 || j >= categories.length) return;
+            const list = [...categories];
+            [list[i], list[j]] = [list[j], list[i]];
+            saveCategories(list).catch(settingsError);
+        }
+
+        function deleteCategory(i) {
+            if (categories.length <= 1) return alert('Minimal harus ada satu kategori.');
+            const name = categories[i];
+            const used = articles.filter(a => a.category === name).length;
+            const msg = used
+                ? `Hapus kategori "${name}"? ${used} tulisan di dalamnya tidak ikut terhapus dan tetap muncul di "Semua Tulisan".`
+                : `Hapus kategori "${name}"?`;
+            if (!confirm(msg)) return;
+            const list = categories.filter((_, idx) => idx !== i);
+            if (activeCategory === name) activeCategory = 'All';
+            saveCategories(list).catch(settingsError);
+        }
+
+        // ---------- Foto tulisan ----------
+        function refreshCoverUI() {
+            const img = document.getElementById('cover-preview');
+            if (formCover) { img.src = formCover; img.style.display = 'block'; } else { img.style.display = 'none'; img.removeAttribute('src'); }
+            document.getElementById('cover-remove').style.display = formCover ? 'inline-block' : 'none';
+        }
+        async function handleCoverFile(input) {
+            const file = input.files[0];
+            input.value = '';
+            if (!file) return;
+            try { formCover = await compressImage(file, 1200, 0.72); refreshCoverUI(); }
+            catch (err) { alert(err.message); }
+        }
+        function removeCover() { formCover = ''; refreshCoverUI(); }
+
+        function renderGallery() {
+            const g = document.getElementById('image-gallery');
+            g.innerHTML = formImages.map(im => `
+                <div class="thumb">
+                    <img src="${im.src}" alt="">
+                    <div class="thumb-actions">
+                        <button type="button" class="ins" onclick="insertImageToken('${im.id}')"><i class="fa-solid fa-plus"></i> Sisipkan</button>
+                        <button type="button" class="del" onclick="removeInlineImage('${im.id}')" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`).join('');
+        }
+        async function handleInlineFiles(input) {
+            const files = Array.from(input.files);
+            input.value = '';
+            for (const file of files) {
+                try {
+                    const src = await compressImage(file, 1000, 0.7);
+                    formImages.push({ id: Math.random().toString(36).slice(2, 8), src });
+                } catch (err) { alert(err.message); }
+            }
+            renderGallery();
+        }
+        function insertImageToken(id) {
+            const ta = document.getElementById('post-content');
+            const token = `\n\n[gambar:${id}]\n\n`;
+            const start = ta.selectionStart ?? ta.value.length;
+            const end = ta.selectionEnd ?? start;
+            ta.value = ta.value.slice(0, start) + token + ta.value.slice(end);
+            ta.focus();
+            ta.selectionStart = ta.selectionEnd = start + token.length;
+        }
+        function removeInlineImage(id) {
+            formImages = formImages.filter(im => im.id !== id);
+            const ta = document.getElementById('post-content');
+            ta.value = ta.value.split(`[gambar:${id}]`).join('');
+            renderGallery();
+        }
+
+        // ---------- CRUD Artikel ----------
+        function resetForm() {
+            document.getElementById('article-form').reset();
+            document.getElementById('edit-doc-id').value = '';
+            document.getElementById('panel-title').innerText = 'Panel Penulis';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publikasikan Tulisan';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+            formCover = ''; formImages = [];
+            refreshCoverUI(); renderGallery(); fillCategorySelect(categories[0]);
+        }
+
+        function editArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (!art) return;
+
+            switchTab('tab-post');
+            document.getElementById('edit-doc-id').value = art.id;
+            document.getElementById('post-title').value = art.title;
+            fillCategorySelect(art.category);
+            document.getElementById('post-tags').value = (art.tags || []).join(', ');
+            document.getElementById('post-content').value = art.content;
+            formCover = art.cover || '';
+            formImages = (art.images || []).map(im => ({ ...im }));
+            refreshCoverUI(); renderGallery();
+
+            document.getElementById('panel-title').innerText = 'Edit Artikel';
+            document.getElementById('submit-btn').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Simpan Perubahan';
+            document.getElementById('cancel-edit-btn').style.display = 'block';
+
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteArticle(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus tulisan ini secara permanen?')) {
+                db.collection('articles').doc(id).delete()
+                    .then(() => alert('Artikel berhasil dihapus!'))
+                    .catch((error) => alert('Gagal menghapus: ' + error.message));
+            }
+        }
+
+        function saveArticle(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const docId = document.getElementById('edit-doc-id').value;
+
+            const title = document.getElementById('post-title').value.trim();
+            const category = document.getElementById('post-category').value;
+            const tags = document.getElementById('post-tags').value.split(',').map(t => t.trim()).filter(t => t !== '');
+            const content = document.getElementById('post-content').value;
+
+            // hanya simpan foto yang benar-benar dipakai di isi tulisan
+            const usedImages = formImages.filter(im => content.includes(`[gambar:${im.id}]`));
+
+            const size = content.length + (formCover || '').length + usedImages.reduce((n, im) => n + im.src.length, 0);
+            if (size > MAX_DOC_CHARS) {
+                return alert('Total ukuran tulisan dan foto terlalu besar untuk satu dokumen. Kurangi jumlah foto atau pakai foto yang lebih kecil.');
+            }
+
+            btn.disabled = true;
+            btn.innerText = docId ? 'Menyimpan Perubahan...' : 'Memublikasikan...';
+            const restore = () => { btn.disabled = false; };
+
+            const payload = { title, category, content, tags, cover: formCover || '', images: usedImages };
+
+            if (docId) {
+                db.collection('articles').doc(docId).update(payload)
+                    .then(() => { alert('Artikel berhasil diperbarui!'); resetForm(); restore(); showHome(); })
+                    .catch((error) => { alert('Gagal memperbarui: ' + error.message); restore(); btn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Simpan Perubahan'; });
+            } else {
+                db.collection('articles').add({
+                    ...payload,
+                    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                })
+                    .then(() => { alert('Artikel berhasil dipublikasikan!'); resetForm(); restore(); showHome(); })
+                    .catch((error) => { alert('Gagal menyimpan: ' + error.message); restore(); btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publikasikan Tulisan'; });
+            }
+        }
+
+        document.getElementById('login-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('login-modal')) {
+                document.getElementById('login-modal').classList.remove('active');
+            }
+        });
+
+        // Render awal
+        renderCategoryNav();
+        fillCategorySelect();
+        renderCategoryManager();
+        renderProfileEverywhere();
+    </script>
+</body>
+</html>
