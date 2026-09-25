@@ -16,6 +16,7 @@
     <!-- FIREBASE SDK (Firestore Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
     <style>
         :root {
@@ -204,7 +205,7 @@
                 <a href="#" onclick="showHome(); return false;" class="site-title">Athenaeum<span>.</span></a>
                 <div class="nav-controls">
                     <button class="icon-btn" id="theme-toggle" title="Ubah Tema"><i class="fa-solid fa-moon"></i></button>
-                    <a class="admin-link no-avatar" id="admin-trigger" onclick="handleAdminClick()" role="button" tabindex="0"><span id="admin-trigger-avatar"></span><span>Admin</span></a>
+                    <a class="admin-link no-avatar" id="admin-trigger" onclick="handleAdminClick()" role="button" tabindex="0"><span id="admin-trigger-avatar"></span><span id="admin-trigger-label">Masuk</span></a>
                 </div>
             </div>
             <nav class="categories" id="category-nav"></nav>
@@ -219,8 +220,9 @@
 
             <div class="admin-tabs">
                 <button type="button" class="tab-btn active" data-tab="tab-post" onclick="switchTab('tab-post')"><i class="fa-solid fa-pen-nib"></i> Tulisan</button>
-                <button type="button" class="tab-btn" data-tab="tab-cats" onclick="switchTab('tab-cats')"><i class="fa-solid fa-list"></i> Kategori</button>
-                <button type="button" class="tab-btn" data-tab="tab-profile" onclick="switchTab('tab-profile')"><i class="fa-solid fa-user"></i> Profil</button>
+                <button type="button" class="tab-btn" data-tab="tab-cats" data-admin-only="true" onclick="switchTab('tab-cats')"><i class="fa-solid fa-list"></i> Kategori</button>
+                <button type="button" class="tab-btn" data-tab="tab-myprofile" onclick="switchTab('tab-myprofile')"><i class="fa-solid fa-user"></i> Profil Saya</button>
+                <button type="button" class="tab-btn" data-tab="tab-profile" data-admin-only="true" onclick="switchTab('tab-profile')"><i class="fa-solid fa-globe"></i> Profil Situs</button>
             </div>
 
             <!-- TAB: TULISAN -->
@@ -272,7 +274,7 @@
             </div>
 
             <!-- TAB: KATEGORI -->
-            <div id="tab-cats" class="tab-pane">
+            <div id="tab-cats" class="tab-pane" data-admin-only="true">
                 <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Ubah nama, urutkan, hapus, atau tambah kategori. Mengubah nama juga memperbarui semua tulisan di kategori itu.</p>
                 <div id="cat-manager"></div>
                 <div class="cat-row" style="margin-top:1rem;">
@@ -281,8 +283,36 @@
                 </div>
             </div>
 
-            <!-- TAB: PROFIL -->
-            <div id="tab-profile" class="tab-pane">
+            <!-- TAB: PROFIL SAYA (semua penulis yang login) -->
+            <div id="tab-myprofile" class="tab-pane">
+                <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Nama dan foto ini akan tampil sebagai penulis pada setiap tulisan yang Anda buat.</p>
+                <form onsubmit="saveMyProfile(event)">
+                    <div class="form-group">
+                        <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.6rem;font-weight:500;">Foto Profil</span>
+                        <div class="profile-row">
+                            <span id="myprofile-preview"></span>
+                            <div class="upload-row">
+                                <label class="upload-btn" for="myprofile-avatar-file"><i class="fa-solid fa-camera"></i> Pilih foto</label>
+                                <input type="file" id="myprofile-avatar-file" accept="image/*" hidden onchange="handleMyAvatarFile(this)">
+                                <button type="button" class="link-btn" id="myprofile-avatar-remove" onclick="removeMyAvatar()" style="display:none;"><i class="fa-solid fa-trash"></i> Hapus foto</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="myprofile-name">Nama Penulis</label>
+                        <input type="text" id="myprofile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di tulisan Anda">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="myprofile-bio">Bio Singkat (opsional)</label>
+                        <input type="text" id="myprofile-bio" class="form-control" maxlength="160" placeholder="Misalnya: Mahasiswa yang gemar menelusuri filsafat dan sains">
+                    </div>
+                    <button type="submit" class="btn" id="myprofile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil Saya</button>
+                </form>
+            </div>
+
+            <!-- TAB: PROFIL SITUS (khusus admin, tampil di beranda) -->
+            <div id="tab-profile" class="tab-pane" data-admin-only="true">
+                <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Profil ini tampil sebagai identitas situs di halaman beranda (Tentang Situs), terpisah dari profil pribadi tiap penulis.</p>
                 <form onsubmit="saveProfile(event)">
                     <div class="form-group">
                         <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.6rem;font-weight:500;">Foto Profil</span>
@@ -296,14 +326,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="lbl" for="profile-name">Nama Penulis</label>
-                        <input type="text" id="profile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di setiap tulisan">
+                        <label class="lbl" for="profile-name">Nama Situs/Penulis Utama</label>
+                        <input type="text" id="profile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di beranda">
                     </div>
                     <div class="form-group">
                         <label class="lbl" for="profile-bio">Bio Singkat (opsional)</label>
                         <input type="text" id="profile-bio" class="form-control" maxlength="160" placeholder="Misalnya: Mahasiswa yang gemar menelusuri filsafat dan sains">
                     </div>
-                    <button type="submit" class="btn" id="profile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil</button>
+                    <button type="submit" class="btn" id="profile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil Situs</button>
                 </form>
             </div>
         </section>
@@ -344,20 +374,43 @@
         </footer>
     </div>
 
-    <!-- LOGIN MODAL -->
+    <!-- LOGIN / DAFTAR MODAL -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal-box">
-            <h3 style="margin-bottom: 1rem;">Akses Admin</h3>
-            <form onsubmit="handleLogin(event)">
+            <div class="admin-tabs" style="margin-bottom:1.2rem;">
+                <button type="button" class="tab-btn active" id="auth-tab-login" onclick="switchAuthTab('login')">Masuk</button>
+                <button type="button" class="tab-btn" id="auth-tab-register" onclick="switchAuthTab('register')">Daftar Akun</button>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <h3 style="margin-bottom: 1rem;">Masuk ke Akun</h3>
                 <div class="form-group">
-                    <label class="lbl" for="username">Username</label>
-                    <input type="text" id="username" class="form-control" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                    <label class="lbl" for="login-email">Email</label>
+                    <input type="email" id="login-email" class="form-control" required autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <label class="lbl" for="password">Password</label>
-                    <input type="password" id="password" class="form-control" required>
+                    <label class="lbl" for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn">Masuk</button>
+                <button type="submit" class="btn" id="login-btn">Masuk</button>
+            </form>
+
+            <form id="register-form" onsubmit="handleRegister(event)" style="display:none;">
+                <h3 style="margin-bottom: 1rem;">Buat Akun Baru</h3>
+                <div class="form-group">
+                    <label class="lbl" for="reg-name">Nama</label>
+                    <input type="text" id="reg-name" class="form-control" required maxlength="60" placeholder="Nama yang akan tampil di tulisan Anda">
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="reg-email">Email</label>
+                    <input type="email" id="reg-email" class="form-control" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="reg-password">Password</label>
+                    <input type="password" id="reg-password" class="form-control" required minlength="6" autocomplete="new-password">
+                    <small>Minimal 6 karakter.</small>
+                </div>
+                <button type="submit" class="btn" id="register-btn">Daftar & Masuk</button>
             </form>
         </div>
     </div>
@@ -375,9 +428,14 @@
             measurementId: "G-PS7VDLM637"
         };
 
-        // Inisialisasi Firebase & Firestore
+        // Inisialisasi Firebase, Firestore & Auth
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Email akun yang otomatis mendapat peran Admin saat mendaftar.
+        // GANTI nilai ini dengan email yang ingin Anda jadikan Admin situs.
+        const ADMIN_EMAIL = "michoahmad02@gmail.com";
 
         // ---------- State ----------
         const DEFAULT_CATEGORIES = ['Filsafat', 'Filsafat Sains', 'Catatan Bebas'];
@@ -385,14 +443,18 @@
 
         let articles = [];
         let categories = [...DEFAULT_CATEGORIES];
-        let profile = { name: '', bio: '', photo: '' };
-        let isAdminLoggedIn = localStorage.getItem('athenaeum_admin') === 'true';
+        let profile = { name: '', bio: '', photo: '' }; // profil situs (khusus admin, tampil di beranda)
+        let currentUser = null;       // objek Firebase Auth user yang sedang login
+        let currentUserData = null;   // { name, bio, photo, role } dari koleksi 'users'
         let activeCategory = 'All';
+
+        function isAdmin() { return !!(currentUserData && currentUserData.role === 'admin'); }
 
         // state form
         let formCover = '';
         let formImages = [];      // [{id, src}]
         let profilePhotoDraft = '';
+        let myProfilePhotoDraft = '';
 
         // ---------- Helpers ----------
         function esc(s) {
@@ -403,6 +465,18 @@
             const cls = `avatar ${size}${ring ? ' avatar-ring' : ''}`;
             if (profile.photo) return `<img class="${cls}" src="${profile.photo}" alt="${esc(authorName())}">`;
             return `<span class="${cls}">${esc(authorName().charAt(0).toUpperCase())}</span>`;
+        }
+        // Penulis suatu tulisan (denormalized di dokumen artikel).
+        // Untuk tulisan lama (sebelum fitur akun ditambahkan), jatuhkan ke profil situs.
+        function articleAuthorName(art) { return art.authorName || authorName(); }
+        function articleAuthorHTML(art, size = 'md') {
+            if (art.authorName) {
+                const cls = `avatar ${size}`;
+                return art.authorPhoto
+                    ? `<img class="${cls}" src="${art.authorPhoto}" alt="${esc(art.authorName)}">`
+                    : `<span class="${cls}">${esc(art.authorName.charAt(0).toUpperCase())}</span>`;
+            }
+            return avatarHTML(size);
         }
         function stripForText(text) {
             return (text || '').replace(/\[gambar:\w+\]/g, ' ').replace(/<[^>]*>/g, ' ');
@@ -485,23 +559,66 @@
             renderArticles();
         }, (error) => console.error('Gagal memuat profil:', error));
 
+        // ---------- Auth listener ----------
+        auth.onAuthStateChanged(async (user) => {
+            currentUser = user;
+            if (user) {
+                try {
+                    const ref = db.collection('users').doc(user.uid);
+                    const snap = await ref.get();
+                    if (snap.exists) {
+                        currentUserData = snap.data();
+                    } else {
+                        // dokumen profil belum ada (mis. gagal tersimpan saat pendaftaran) -> buat ulang sekarang
+                        const role = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) ? 'admin' : 'user';
+                        currentUserData = { name: user.email, bio: '', photo: '', role };
+                        await ref.set({ ...currentUserData, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    }
+                } catch (err) {
+                    console.error('Gagal memuat/menulis profil akun:', err);
+                    currentUserData = { name: user.email, bio: '', photo: '', role: 'user' };
+                }
+            } else {
+                currentUserData = null;
+            }
+            renderAuthUI();
+            renderMyProfileForm();
+            renderArticles();
+        });
+
         function settingsError(err) {
             alert('Gagal menyimpan: ' + err.message + '\n\nPastikan aturan Firestore mengizinkan tulis ke koleksi "settings".');
         }
 
         // ---------- Render ----------
-        function renderProfileEverywhere() {
-            // tombol admin di header
+        // Menampilkan status login (akun) di tombol header, dan menyembunyikan
+        // tab/fitur khusus Admin dari penulis biasa.
+        function renderAuthUI() {
             const trigger = document.getElementById('admin-trigger');
             const av = document.getElementById('admin-trigger-avatar');
-            if (profile.photo || profile.name) {
-                av.innerHTML = avatarHTML('sm');
+            const label = document.getElementById('admin-trigger-label');
+            if (currentUser) {
+                const name = (currentUserData && currentUserData.name) || currentUser.email;
+                av.innerHTML = (currentUserData && currentUserData.photo)
+                    ? `<img class="avatar sm" src="${currentUserData.photo}" alt="${esc(name)}">`
+                    : `<span class="avatar sm">${esc((name || 'U').charAt(0).toUpperCase())}</span>`;
                 trigger.classList.remove('no-avatar');
+                label.textContent = name;
             } else {
                 av.innerHTML = '';
                 trigger.classList.add('no-avatar');
+                label.textContent = 'Masuk';
+                document.getElementById('admin-panel').style.display = 'none';
             }
-            // kartu penulis di beranda
+            document.querySelectorAll('[data-admin-only]').forEach(el => {
+                el.style.display = isAdmin() ? '' : 'none';
+            });
+            const panelTitle = document.getElementById('panel-title');
+            if (panelTitle) panelTitle.innerText = isAdmin() ? 'Panel Admin' : 'Panel Penulis';
+        }
+
+        function renderProfileEverywhere() {
+            // kartu penulis di beranda (profil situs)
             const strip = document.getElementById('author-strip');
             strip.innerHTML = (profile.name || profile.photo) ? `
                 <div class="author-strip">
@@ -588,7 +705,8 @@
                 const plain = stripForText(art.content).replace(/\s+/g, ' ').trim();
                 const excerpt = esc(plain.substring(0, 160)) + (plain.length > 160 ? '...' : '');
 
-                const adminButtons = isAdminLoggedIn ? `
+                const canManage = currentUser && (isAdmin() || art.authorId === currentUser.uid);
+                const adminButtons = canManage ? `
                     <div class="admin-actions">
                         <button class="action-btn edit" onclick="editArticle('${art.id}')" title="Edit Tulisan"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="action-btn delete" onclick="deleteArticle('${art.id}')" title="Hapus Tulisan"><i class="fa-solid fa-trash"></i> Hapus</button>
@@ -605,7 +723,7 @@
                         <span>•</span>
                         <span>${readTime}</span>
                         <span>•</span>
-                        <span class="by">${avatarHTML('sm')} ${esc(authorName())}</span>
+                        <span class="by">${articleAuthorHTML(art, 'sm')} ${esc(articleAuthorName(art))}</span>
                     </div>
                     <h2 class="article-title" onclick="openArticle('${art.id}')">${esc(art.title)}</h2>
                     <p class="article-excerpt">${excerpt}</p>
@@ -648,7 +766,7 @@
             document.getElementById('view-readtime').innerText = calcReadTime(art.content);
             document.getElementById('view-title').innerText = art.title;
             document.getElementById('view-content').innerHTML = renderContent(art);
-            document.getElementById('view-byline').innerHTML = `${avatarHTML('md')} <span>Ditulis oleh <strong>${esc(authorName())}</strong></span>`;
+            document.getElementById('view-byline').innerHTML = `${articleAuthorHTML(art, 'md')} <span>Ditulis oleh <strong>${esc(articleAuthorName(art))}</strong></span>`;
             document.getElementById('view-tags').innerHTML = (art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
 
             const cover = document.getElementById('view-cover');
@@ -656,11 +774,11 @@
 
             document.getElementById('view-author-card').innerHTML = `
                 <div class="author-card">
-                    ${avatarHTML('xl', true)}
+                    ${articleAuthorHTML(art, 'xl')}
                     <div>
                         <div class="label">Penulis</div>
-                        <div class="name">${esc(authorName())}</div>
-                        ${profile.bio ? `<div class="bio">${esc(profile.bio)}</div>` : ''}
+                        <div class="name">${esc(articleAuthorName(art))}</div>
+                        ${(art.authorBio || (!art.authorId && profile.bio)) ? `<div class="bio">${esc(art.authorBio || profile.bio)}</div>` : ''}
                     </div>
                 </div>`;
 
@@ -689,45 +807,94 @@
             applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         });
 
-        // ---------- Admin ----------
+        // ---------- Akun / Login ----------
         function handleAdminClick() {
-            if (isAdminLoggedIn) toggleAdminPanel();
-            else document.getElementById('login-modal').classList.add('active');
+            if (currentUser) toggleAdminPanel();
+            else { switchAuthTab('login'); document.getElementById('login-modal').classList.add('active'); }
         }
         document.getElementById('admin-trigger').addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleAdminClick(); }
         });
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value.trim().toLowerCase();
-            const pass = document.getElementById('password').value.trim();
+        function switchAuthTab(which) {
+            document.getElementById('login-form').style.display = which === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = which === 'register' ? 'block' : 'none';
+            document.getElementById('auth-tab-login').classList.toggle('active', which === 'login');
+            document.getElementById('auth-tab-register').classList.toggle('active', which === 'register');
+        }
 
-            // Kredensial Admin
-            if (user === 'michoahmad02' && pass === 'Pujianto123') {
-                isAdminLoggedIn = true;
-                localStorage.setItem('athenaeum_admin', 'true');
+        function authErrorMessage(err) {
+            const map = {
+                'auth/email-already-in-use': 'Email sudah terdaftar. Silakan masuk.',
+                'auth/invalid-email': 'Format email tidak valid.',
+                'auth/weak-password': 'Password terlalu lemah (minimal 6 karakter).',
+                'auth/user-not-found': 'Email tidak ditemukan.',
+                'auth/wrong-password': 'Password salah.',
+                'auth/invalid-credential': 'Email atau password salah.',
+                'auth/too-many-requests': 'Terlalu banyak percobaan gagal. Coba lagi nanti.'
+            };
+            return map[err.code] || err.message;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value;
+            btn.disabled = true;
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
                 document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('login-form').reset();
                 toggleAdminPanel();
-                renderArticles();
-            } else {
-                alert('Username atau password salah!');
+            } catch (err) {
+                alert('Gagal masuk: ' + authErrorMessage(err));
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('register-btn');
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-password').value;
+            btn.disabled = true;
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(email, pass);
+                const role = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
+                await db.collection('users').doc(cred.user.uid).set({
+                    name, bio: '', photo: '', role,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('register-form').reset();
+                toggleAdminPanel();
+            } catch (err) {
+                alert('Gagal mendaftar: ' + authErrorMessage(err));
+            } finally {
+                btn.disabled = false;
             }
         }
 
         function logoutAdmin() {
-            isAdminLoggedIn = false;
-            localStorage.removeItem('athenaeum_admin');
-            document.getElementById('admin-panel').style.display = 'none';
-            resetForm();
-            renderArticles();
-            alert('Berhasil keluar.');
+            auth.signOut().then(() => {
+                document.getElementById('admin-panel').style.display = 'none';
+                resetForm();
+                alert('Berhasil keluar.');
+            });
         }
 
         function toggleAdminPanel() {
             const panel = document.getElementById('admin-panel');
             panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            if (panel.style.display === 'block') panel.scrollIntoView({ behavior: 'smooth' });
+            if (panel.style.display === 'block') {
+                const activeBtn = document.querySelector('.tab-btn.active');
+                if (activeBtn && activeBtn.dataset.adminOnly === 'true' && !isAdmin()) switchTab('tab-post');
+                renderMyProfileForm();
+                panel.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function switchTab(id) {
@@ -758,7 +925,60 @@
                 photo: profilePhotoDraft
             };
             db.collection('settings').doc('profile').set(data)
-                .then(() => alert('Profil berhasil disimpan!'))
+                .then(() => alert('Profil situs berhasil disimpan!'))
+                .catch(settingsError)
+                .finally(() => { btn.disabled = false; });
+        }
+
+        // ---------- Profil pribadi penulis (Profil Saya) ----------
+        function renderMyProfileForm() {
+            const nameEl = document.getElementById('myprofile-name');
+            const bioEl = document.getElementById('myprofile-bio');
+            if (!nameEl) return;
+            if (currentUserData) {
+                if (document.activeElement !== nameEl) nameEl.value = currentUserData.name || '';
+                if (document.activeElement !== bioEl) bioEl.value = currentUserData.bio || '';
+                myProfilePhotoDraft = currentUserData.photo || '';
+            } else {
+                nameEl.value = ''; bioEl.value = ''; myProfilePhotoDraft = '';
+            }
+            renderMyProfilePreview();
+        }
+        function renderMyProfilePreview() {
+            const name = document.getElementById('myprofile-name').value || (currentUserData && currentUserData.name) || 'P';
+            const el = document.getElementById('myprofile-preview');
+            el.innerHTML = myProfilePhotoDraft
+                ? `<img class="avatar xl avatar-ring" src="${myProfilePhotoDraft}" alt="Foto profil">`
+                : `<span class="avatar xl avatar-ring">${esc(name.charAt(0).toUpperCase())}</span>`;
+            document.getElementById('myprofile-avatar-remove').style.display = myProfilePhotoDraft ? 'inline-block' : 'none';
+        }
+        document.getElementById('myprofile-name').addEventListener('input', renderMyProfilePreview);
+        async function handleMyAvatarFile(input) {
+            const file = input.files[0];
+            input.value = '';
+            if (!file) return;
+            try { myProfilePhotoDraft = await compressImage(file, 320, 0.85, true); renderMyProfilePreview(); }
+            catch (err) { alert(err.message); }
+        }
+        function removeMyAvatar() { myProfilePhotoDraft = ''; renderMyProfilePreview(); }
+
+        function saveMyProfile(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const btn = document.getElementById('myprofile-btn');
+            btn.disabled = true;
+            const data = {
+                name: document.getElementById('myprofile-name').value.trim(),
+                bio: document.getElementById('myprofile-bio').value.trim(),
+                photo: myProfilePhotoDraft,
+                role: (currentUserData && currentUserData.role) || 'user'
+            };
+            db.collection('users').doc(currentUser.uid).set(data, { merge: true })
+                .then(() => {
+                    currentUserData = { ...currentUserData, ...data };
+                    renderAuthUI();
+                    alert('Profil Anda berhasil disimpan!');
+                })
                 .catch(settingsError)
                 .finally(() => { btn.disabled = false; });
         }
@@ -882,6 +1102,9 @@
         function editArticle(id) {
             const art = articles.find(a => a.id === id);
             if (!art) return;
+            if (art.authorId && (!currentUser || art.authorId !== currentUser.uid) && !isAdmin()) {
+                return alert('Anda tidak berhak mengedit tulisan orang lain.');
+            }
 
             switchTab('tab-post');
             document.getElementById('edit-doc-id').value = art.id;
@@ -903,6 +1126,10 @@
         }
 
         function deleteArticle(id) {
+            const art = articles.find(a => a.id === id);
+            if (art && art.authorId && (!currentUser || art.authorId !== currentUser.uid) && !isAdmin()) {
+                return alert('Anda tidak berhak menghapus tulisan orang lain.');
+            }
             if (confirm('Apakah Anda yakin ingin menghapus tulisan ini secara permanen?')) {
                 db.collection('articles').doc(id).delete()
                     .then(() => alert('Artikel berhasil dihapus!'))
@@ -912,6 +1139,8 @@
 
         function saveArticle(e) {
             e.preventDefault();
+            if (!currentUser) return alert('Anda harus masuk atau membuat akun terlebih dahulu untuk menulis.');
+
             const btn = document.getElementById('submit-btn');
             const docId = document.getElementById('edit-doc-id').value;
 
@@ -928,6 +1157,13 @@
                 return alert('Total ukuran tulisan dan foto terlalu besar untuk satu dokumen. Kurangi jumlah foto atau pakai foto yang lebih kecil.');
             }
 
+            if (docId) {
+                const existing = articles.find(a => a.id === docId);
+                if (existing && existing.authorId && existing.authorId !== currentUser.uid && !isAdmin()) {
+                    return alert('Anda tidak berhak mengedit tulisan orang lain.');
+                }
+            }
+
             btn.disabled = true;
             btn.innerText = docId ? 'Menyimpan Perubahan...' : 'Memublikasikan...';
             const restore = () => { btn.disabled = false; };
@@ -941,6 +1177,10 @@
             } else {
                 db.collection('articles').add({
                     ...payload,
+                    authorId: currentUser.uid,
+                    authorName: (currentUserData && currentUserData.name) || currentUser.email,
+                    authorPhoto: (currentUserData && currentUserData.photo) || '',
+                    authorBio: (currentUserData && currentUserData.bio) || '',
                     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 })
@@ -960,6 +1200,7 @@
         fillCategorySelect();
         renderCategoryManager();
         renderProfileEverywhere();
+        renderAuthUI();
     </script>
 </body>
 </html>
