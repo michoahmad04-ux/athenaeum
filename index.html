@@ -16,7 +16,6 @@
     <!-- FIREBASE SDK (Firestore Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
     <style>
         :root {
@@ -462,32 +461,48 @@
         </footer>
     </div>
 
-    <!-- MODAL MASUK -->
+    <!-- MODAL MASUK / DAFTAR (email + sandi) -->
     <div class="modal-overlay" id="login-modal">
-        <div class="modal-box" style="max-width:380px;text-align:center;">
-            <div id="pane-google-login">
-                <i class="fa-solid fa-book-open" style="font-size:2rem;color:var(--gold);margin-bottom:0.8rem;"></i>
-                <h3 style="margin-bottom:1.4rem;">Masuk</h3>
-                <button type="button" class="btn" id="google-login-btn" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;">
-                    <i class="fa-brands fa-google"></i> Masuk dengan Google
-                </button>
+        <div class="modal-box">
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" data-auth="pane-login" onclick="switchAuthTab('pane-login')">Masuk</button>
+                <button type="button" class="auth-tab-btn" data-auth="pane-register" onclick="switchAuthTab('pane-register')">Daftar</button>
             </div>
 
-            <!-- Muncul sekali saja: lengkapi username setelah login Google pertama kali -->
-            <div id="pane-complete-profile" style="display:none;text-align:left;">
-                <h3 style="margin-bottom:0.3rem;text-align:center;">Satu langkah lagi</h3>
-                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.2rem;text-align:center;">Pilih username supaya pengguna lain bisa menemukan kamu.</p>
-                <form onsubmit="handleCompleteProfile(event)">
+            <div id="pane-login" class="auth-pane active">
+                <form onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label class="lbl" for="setup-displayname">Nama Tampilan</label>
-                        <input type="text" id="setup-displayname" class="form-control" required maxlength="60">
+                        <label class="lbl" for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-control" required autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label class="lbl" for="setup-username">Username</label>
-                        <input type="text" id="setup-username" class="form-control" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="huruf kecil, angka, tanpa spasi">
-                        <small>Dipakai untuk dicari pengguna lain. ID unik kamu dibuat otomatis dari akun Google.</small>
+                        <label class="lbl" for="login-password">Sandi</label>
+                        <input type="password" id="login-password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn" id="complete-profile-btn">Selesai, Mulai!</button>
+                    <button type="submit" class="btn" id="login-btn">Masuk</button>
+                </form>
+            </div>
+
+            <div id="pane-register" class="auth-pane">
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label class="lbl" for="reg-displayname">Nama Tampilan</label>
+                        <input type="text" id="reg-displayname" class="form-control" required maxlength="60" placeholder="Nama yang muncul di tulisan Anda">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="reg-username">Username</label>
+                        <input type="text" id="reg-username" class="form-control" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="huruf kecil, angka, tanpa spasi">
+                        <small>Dipakai untuk dicari pengguna lain. ID unik dibuatkan otomatis.</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="reg-email">Email</label>
+                        <input type="email" id="reg-email" class="form-control" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="reg-password">Sandi</label>
+                        <input type="password" id="reg-password" class="form-control" required minlength="4">
+                    </div>
+                    <button type="submit" class="btn" id="register-btn">Buat Akun</button>
                 </form>
             </div>
         </div>
@@ -544,8 +559,7 @@
         // Inisialisasi Firebase & Firestore
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
-        const googleProvider = new firebase.auth.GoogleAuthProvider();
+
 
         // ---------- State ----------
         const DEFAULT_CATEGORIES = ['Filsafat', 'Filsafat Sains', 'Catatan Bebas'];
@@ -559,12 +573,10 @@
         // ---------- Akun & sosial ----------
         const ADMIN_USERNAME = 'michoahmad02'; // disimpan untuk kompatibilitas data lama
         const ADMIN_EMAIL = 'michoahmad02@gmail.com'; // status admin sekarang ditentukan dari email Google ini
-        let currentAuthEmail = '';
         let legacyMigrated = false;
         let usersMap = {};              // id -> {id, username, displayName, bio, photo}
         let currentUser = null;         // user yang sedang login (dari usersMap)
-        let currentUserId = '';         // diisi oleh Firebase Auth (onAuthStateChanged), bukan localStorage lagi
-        let pendingGoogleAccount = null; // data Google sementara, dipakai saat lengkapi profil pertama kali
+        let currentUserId = localStorage.getItem('athenaeum_uid') || '';
         let followingSet = new Set();   // id yang DIIKUTI currentUser
         let followerSet = new Set();    // id yang MENGIKUTI currentUser
         let isAdminLoggedIn = false;    // true jika currentUser adalah akun admin
@@ -707,7 +719,7 @@
             snapshot.forEach(doc => { usersMap[doc.id] = { id: doc.id, ...doc.data() }; });
             if (currentUserId && usersMap[currentUserId]) {
                 currentUser = usersMap[currentUserId];
-                isAdminLoggedIn = (currentAuthEmail === ADMIN_EMAIL) || isAdminUser(currentUser);
+                isAdminLoggedIn = isAdminUser(currentUser);
             }
             renderUserTrigger();
             renderArticles();
@@ -803,95 +815,81 @@
             }
         });
 
-        // ---------- Masuk dengan Google ----------
-        function signInWithGoogle() {
-            const btn = document.getElementById('google-login-btn');
-            btn.disabled = true;
-            auth.signInWithPopup(googleProvider)
-                .catch(err => {
-                    if (err.code === 'auth/popup-blocked') {
-                        alert('Jendela pop-up diblokir browser. Izinkan pop-up untuk situs ini, lalu coba lagi.');
-                    } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
-                        alert('Gagal masuk dengan Google: ' + err.message);
-                    }
-                })
-                .finally(() => { btn.disabled = false; });
+        function switchAuthTab(id) {
+            document.querySelectorAll('.auth-pane').forEach(p => p.classList.toggle('active', p.id === id));
+            document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.auth === id));
         }
 
-        // Dipanggil otomatis setiap status login Google berubah (termasuk saat halaman dibuka)
-        auth.onAuthStateChanged((fbUser) => {
-            if (!fbUser) {
-                currentUserId = ''; currentUser = null; isAdminLoggedIn = false; pendingGoogleAccount = null;
-                currentAuthEmail = ''; legacyMigrated = false;
-                startSocialListeners();
-                renderUserTrigger();
-                renderArticles();
-                return;
-            }
-            currentAuthEmail = fbUser.email || '';
-            db.collection('users').doc(fbUser.uid).get().then(doc => {
-                if (doc.exists) {
-                    // sudah pernah setup profil sebelumnya
-                    currentUserId = fbUser.uid;
-                    document.getElementById('login-modal').classList.remove('active');
-                    startSocialListeners();
-                } else {
-                    // login Google pertama kali: minta pilih username dulu
-                    pendingGoogleAccount = { uid: fbUser.uid, name: fbUser.displayName || '', photo: fbUser.photoURL || '', email: fbUser.email || '' };
-                    document.getElementById('setup-displayname').value = pendingGoogleAccount.name;
-                    document.getElementById('pane-google-login').style.display = 'none';
-                    document.getElementById('pane-complete-profile').style.display = 'block';
-                    document.getElementById('login-modal').classList.add('active');
-                }
-            }).catch(err => console.error('Gagal memuat profil pengguna:', err));
-        });
-
-        function handleCompleteProfile(e) {
+        // ---------- Daftar & Masuk (email + sandi) ----------
+        function handleRegister(e) {
             e.preventDefault();
-            if (!pendingGoogleAccount) return;
-            const displayName = document.getElementById('setup-displayname').value.trim();
-            const username = document.getElementById('setup-username').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g, '');
+            const displayName = document.getElementById('reg-displayname').value.trim();
+            const username = document.getElementById('reg-username').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g, '');
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const password = document.getElementById('reg-password').value;
             if (!username) { alert('Username hanya boleh huruf kecil, angka, titik, atau garis bawah.'); return; }
 
-            const btn = document.getElementById('complete-profile-btn');
+            const btn = document.getElementById('register-btn');
             btn.disabled = true;
 
-            db.collection('users').where('username', '==', username).limit(1).get()
+            Promise.all([
+                db.collection('users').where('username', '==', username).limit(1).get(),
+                db.collection('users').where('email', '==', email).limit(1).get()
+            ]).then(([byUsername, byEmail]) => {
+                if (!byUsername.empty) { alert('Username sudah dipakai, coba yang lain.'); return null; }
+                if (!byEmail.empty) { alert('Email ini sudah terdaftar. Coba masuk saja.'); return null; }
+                const id = genRandomId();
+                return db.collection('users').doc(id).set({
+                    username, email, password, displayName: displayName || username, bio: '', photo: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => id);
+            }).then(id => {
+                if (!id) return;
+                currentUserId = id;
+                localStorage.setItem('athenaeum_uid', id);
+                document.getElementById('login-modal').classList.remove('active');
+                startSocialListeners();
+            }).catch(err => alert('Gagal mendaftar: ' + err.message))
+              .finally(() => { btn.disabled = false; });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pass = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+
+            db.collection('users').where('email', '==', email).limit(1).get()
                 .then(snap => {
-                    if (!snap.empty) { alert('Username sudah dipakai, coba yang lain.'); btn.disabled = false; return null; }
-                    return db.collection('users').doc(pendingGoogleAccount.uid).set({
-                        username, displayName: displayName || username,
-                        bio: '', photo: pendingGoogleAccount.photo || '', email: pendingGoogleAccount.email || '',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                })
-                .then((res) => {
-                    if (res === null) return;
-                    currentUserId = pendingGoogleAccount.uid;
-                    pendingGoogleAccount = null;
+                    if (snap.empty || snap.docs[0].data().password !== pass) {
+                        alert('Email atau sandi salah!'); return;
+                    }
+                    currentUserId = snap.docs[0].id;
+                    localStorage.setItem('athenaeum_uid', currentUserId);
                     document.getElementById('login-modal').classList.remove('active');
-                    document.getElementById('pane-complete-profile').style.display = 'none';
-                    document.getElementById('pane-google-login').style.display = 'block';
                     startSocialListeners();
                 })
-                .catch(err => alert('Gagal menyimpan profil: ' + err.message))
+                .catch(err => alert('Gagal masuk: ' + err.message))
                 .finally(() => { btn.disabled = false; });
         }
 
         function logoutUser() {
+            currentUserId = ''; currentUser = null; isAdminLoggedIn = false; legacyMigrated = false;
+            localStorage.removeItem('athenaeum_uid');
+            startSocialListeners();
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('user-menu').classList.remove('active');
             closeChatPanel();
             resetForm();
-            auth.signOut();
+            renderUserTrigger();
+            renderArticles();
             showHome();
         }
 
         function requireLogin() {
             if (currentUser) return true;
             document.getElementById('user-menu').classList.remove('active');
-            document.getElementById('pane-google-login').style.display = 'block';
-            document.getElementById('pane-complete-profile').style.display = 'none';
             document.getElementById('login-modal').classList.add('active');
             return false;
         }
