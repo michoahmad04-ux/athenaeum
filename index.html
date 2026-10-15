@@ -193,6 +193,85 @@
             .author-card { flex-direction: column; text-align: center; }
         }
         @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+        /* ===================== AKUN & SOSIAL ===================== */
+        .user-trigger { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; color: var(--blue); border: 1px solid var(--border-color); padding: 0.3rem 0.9rem 0.3rem 0.4rem; border-radius: 999px; cursor: pointer; background: var(--surface-color); position: relative; }
+        .user-trigger:hover { border-color: var(--gold); }
+        .user-trigger.no-avatar { padding-left: 0.9rem; }
+
+        .user-menu { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow); min-width: 220px; padding: 0.5rem; z-index: 200; display: none; text-align: left; }
+        .user-menu.active { display: block; }
+        .user-menu-head { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.6rem 0.8rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem; }
+        .user-menu-head .uname { font-size: 0.78rem; color: var(--text-secondary); }
+        .user-menu-head .dname { font-family: var(--font-serif); font-weight: 600; }
+        .user-menu-item { display: flex; align-items: center; gap: 0.6rem; width: 100%; background: none; border: none; text-align: left; padding: 0.55rem 0.6rem; border-radius: 6px; font-size: 0.85rem; color: var(--text-primary); cursor: pointer; font-family: var(--font-sans); }
+        .user-menu-item:hover { background: var(--surface-color); color: var(--blue); }
+        .user-menu-item.danger:hover { color: var(--danger-color); }
+
+        .auth-tabs { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; background: var(--surface-color); padding: 0.3rem; border-radius: 8px; border: 1px solid var(--border-color); }
+        .auth-tab-btn { flex: 1; background: none; border: none; padding: 0.55rem 0.5rem; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; }
+        .auth-tab-btn.active { background: var(--blue); color: #fff; font-weight: 500; }
+        .auth-pane { display: none; }
+        .auth-pane.active { display: block; }
+        .id-chip { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--gold-text); background: var(--gold-soft); border: 1px solid var(--border-color); padding: 0.15rem 0.6rem; border-radius: 999px; font-family: 'Courier New', monospace; }
+
+        /* Kartu saran tulisan */
+        .suggested-wrap { margin-bottom: 2.5rem; }
+        .suggested-title { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); margin-bottom: 1rem; font-weight: 600; }
+        .suggested-row { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem; }
+        .suggested-card { flex: 0 0 240px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 10px; padding: 1rem; cursor: pointer; transition: var(--transition); }
+        .suggested-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+        .suggested-card .scat { font-size: 0.72rem; color: var(--gold-text); font-weight: 600; margin-bottom: 0.4rem; }
+        .suggested-card .stitle { font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.35; margin-bottom: 0.6rem; }
+        .suggested-card .sauthor { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--text-secondary); }
+
+        /* Panel pencarian pengguna */
+        .search-box-row { display: flex; gap: 0.6rem; margin-bottom: 1rem; }
+        .search-box-row .form-control { flex: 1; }
+        .user-result-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0.3rem; border-bottom: 1px solid var(--border-color); }
+        .user-result-row .uinfo { flex: 1; min-width: 0; cursor: pointer; }
+        .user-result-row .uinfo .dname { font-weight: 600; font-size: 0.92rem; }
+        .user-result-row .uinfo .uname { font-size: 0.78rem; color: var(--text-secondary); }
+        .follow-btn { font-size: 0.78rem; padding: 0.4rem 0.9rem; border-radius: 999px; border: 1px solid var(--blue); background: none; color: var(--blue); cursor: pointer; white-space: nowrap; font-family: var(--font-sans); font-weight: 500; }
+        .follow-btn.following { background: var(--surface-color); border-color: var(--border-color); color: var(--text-secondary); }
+        .follow-btn.small { font-size: 0.72rem; padding: 0.3rem 0.7rem; }
+
+        /* Halaman profil pengguna */
+        .user-profile-view { display: none; }
+        .profile-header { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; padding: 1.6rem; background: var(--surface-color); border: 1px solid var(--border-color); border-top: 4px solid var(--gold); border-radius: 12px; margin-bottom: 2rem; }
+        .profile-header .pinfo { flex: 1; min-width: 180px; }
+        .profile-header .pname { font-family: var(--font-serif); font-size: 1.5rem; }
+        .profile-header .puname { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+        .profile-header .pbio { font-size: 0.9rem; color: var(--text-secondary); margin: 0.5rem 0; }
+        .profile-stats { display: flex; gap: 1.2rem; font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.4rem; }
+        .profile-stats strong { color: var(--text-primary); }
+        .profile-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .chat-btn { font-size: 0.78rem; padding: 0.4rem 0.9rem; border-radius: 999px; border: 1px solid var(--gold); background: none; color: var(--gold-text); cursor: pointer; font-family: var(--font-sans); font-weight: 500; }
+
+        /* Panel pesan / chat */
+        .chat-fab { position: fixed; bottom: 1.4rem; right: 1.4rem; width: 52px; height: 52px; border-radius: 50%; background: var(--blue); color: #fff; border: none; font-size: 1.2rem; box-shadow: var(--shadow); cursor: pointer; z-index: 300; display: none; align-items: center; justify-content: center; }
+        .chat-fab.show { display: flex; }
+        .chat-fab .badge-dot { position: absolute; top: 2px; right: 2px; width: 10px; height: 10px; background: var(--gold); border-radius: 50%; border: 2px solid var(--bg-color); display: none; }
+        .chat-panel { position: fixed; bottom: 1.4rem; right: 1.4rem; width: 340px; max-width: calc(100vw - 2rem); height: 460px; max-height: calc(100vh - 3rem); background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: var(--shadow); z-index: 310; display: none; flex-direction: column; overflow: hidden; }
+        .chat-panel.active { display: flex; }
+        .chat-panel-head { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-color); background: var(--surface-color); }
+        .chat-panel-head .ttl { flex: 1; font-weight: 600; font-size: 0.9rem; }
+        .chat-panel-head button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.95rem; }
+        .chat-list { overflow-y: auto; flex: 1; }
+        .chat-list-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .chat-list-item:hover { background: var(--surface-color); }
+        .chat-list-item .cname { font-size: 0.88rem; font-weight: 500; }
+        .chat-thread { display: none; flex-direction: column; flex: 1; min-height: 0; }
+        .chat-thread.active { display: flex; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .chat-bubble { max-width: 75%; padding: 0.5rem 0.8rem; border-radius: 14px; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word; }
+        .chat-bubble.me { align-self: flex-end; background: var(--blue); color: #fff; border-bottom-right-radius: 4px; }
+        .chat-bubble.them { align-self: flex-start; background: var(--surface-color); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+        .chat-input-row { display: flex; gap: 0.5rem; padding: 0.6rem; border-top: 1px solid var(--border-color); }
+        .chat-input-row input { flex: 1; padding: 0.5rem 0.8rem; border-radius: 999px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-primary); font-size: 0.85rem; outline: none; }
+        .chat-input-row button { background: var(--blue); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; flex-shrink: 0; }
+        .empty-note { text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 2rem 1rem; }
+        .locked-note { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); background: var(--surface-color); border: 1px dashed var(--border-color); padding: 0.6rem 0.9rem; border-radius: 8px; margin-top: 0.6rem; }
     </style>
 </head>
 <body>
@@ -205,24 +284,34 @@
                 <a href="#" onclick="showHome(); return false;" class="site-title">Athenaeum<span>.</span></a>
                 <div class="nav-controls">
                     <button class="icon-btn" id="theme-toggle" title="Ubah Tema"><i class="fa-solid fa-moon"></i></button>
-                    <a class="admin-link no-avatar" id="admin-trigger" onclick="handleAdminClick()" role="button" tabindex="0"><span id="admin-trigger-avatar"></span><span id="admin-trigger-label">Masuk</span></a>
+                    <button class="icon-btn" id="search-user-trigger" title="Cari Pengguna" onclick="openUserSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <div style="position:relative;">
+                        <a class="user-trigger no-avatar" id="user-trigger" onclick="handleUserTriggerClick()" role="button" tabindex="0"><span id="user-trigger-avatar"></span><span id="user-trigger-label">Masuk</span></a>
+                        <div class="user-menu" id="user-menu">
+                            <div class="user-menu-head" id="user-menu-head"></div>
+                            <button type="button" class="user-menu-item" onclick="openOwnProfile()"><i class="fa-solid fa-id-badge"></i> Profil Saya</button>
+                            <button type="button" class="user-menu-item" onclick="openWritePanel()"><i class="fa-solid fa-pen-nib"></i> Tulis Esai</button>
+                            <button type="button" class="user-menu-item" onclick="openChatPanel()"><i class="fa-solid fa-comments"></i> Pesan</button>
+                            <button type="button" class="user-menu-item" id="admin-cat-menu-item" style="display:none;" onclick="openCategoryPanel()"><i class="fa-solid fa-list"></i> Kelola Kategori</button>
+                            <button type="button" class="user-menu-item danger" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <nav class="categories" id="category-nav"></nav>
         </header>
 
-        <!-- ADMIN PANEL -->
+        <!-- PANEL PENGGUNA (menulis, profil, kategori khusus admin) -->
         <section id="admin-panel" class="admin-panel">
             <div class="admin-panel-header">
                 <h3 id="panel-title">Panel Penulis</h3>
-                <button class="icon-btn" onclick="logoutAdmin()" title="Keluar"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+                <button class="icon-btn" onclick="toggleAdminPanel()" title="Tutup"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <div class="admin-tabs">
                 <button type="button" class="tab-btn active" data-tab="tab-post" onclick="switchTab('tab-post')"><i class="fa-solid fa-pen-nib"></i> Tulisan</button>
-                <button type="button" class="tab-btn" data-tab="tab-cats" data-admin-only="true" onclick="switchTab('tab-cats')"><i class="fa-solid fa-list"></i> Kategori</button>
-                <button type="button" class="tab-btn" data-tab="tab-myprofile" onclick="switchTab('tab-myprofile')"><i class="fa-solid fa-user"></i> Profil Saya</button>
-                <button type="button" class="tab-btn" data-tab="tab-profile" data-admin-only="true" onclick="switchTab('tab-profile')"><i class="fa-solid fa-globe"></i> Profil Situs</button>
+                <button type="button" class="tab-btn" id="tab-cats-btn" data-tab="tab-cats" style="display:none;" onclick="switchTab('tab-cats')"><i class="fa-solid fa-list"></i> Kategori</button>
+                <button type="button" class="tab-btn" data-tab="tab-profile" onclick="switchTab('tab-profile')"><i class="fa-solid fa-user"></i> Profil</button>
             </div>
 
             <!-- TAB: TULISAN -->
@@ -274,7 +363,7 @@
             </div>
 
             <!-- TAB: KATEGORI -->
-            <div id="tab-cats" class="tab-pane" data-admin-only="true">
+            <div id="tab-cats" class="tab-pane">
                 <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Ubah nama, urutkan, hapus, atau tambah kategori. Mengubah nama juga memperbarui semua tulisan di kategori itu.</p>
                 <div id="cat-manager"></div>
                 <div class="cat-row" style="margin-top:1rem;">
@@ -283,36 +372,8 @@
                 </div>
             </div>
 
-            <!-- TAB: PROFIL SAYA (semua penulis yang login) -->
-            <div id="tab-myprofile" class="tab-pane">
-                <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Nama dan foto ini akan tampil sebagai penulis pada setiap tulisan yang Anda buat.</p>
-                <form onsubmit="saveMyProfile(event)">
-                    <div class="form-group">
-                        <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.6rem;font-weight:500;">Foto Profil</span>
-                        <div class="profile-row">
-                            <span id="myprofile-preview"></span>
-                            <div class="upload-row">
-                                <label class="upload-btn" for="myprofile-avatar-file"><i class="fa-solid fa-camera"></i> Pilih foto</label>
-                                <input type="file" id="myprofile-avatar-file" accept="image/*" hidden onchange="handleMyAvatarFile(this)">
-                                <button type="button" class="link-btn" id="myprofile-avatar-remove" onclick="removeMyAvatar()" style="display:none;"><i class="fa-solid fa-trash"></i> Hapus foto</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="lbl" for="myprofile-name">Nama Penulis</label>
-                        <input type="text" id="myprofile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di tulisan Anda">
-                    </div>
-                    <div class="form-group">
-                        <label class="lbl" for="myprofile-bio">Bio Singkat (opsional)</label>
-                        <input type="text" id="myprofile-bio" class="form-control" maxlength="160" placeholder="Misalnya: Mahasiswa yang gemar menelusuri filsafat dan sains">
-                    </div>
-                    <button type="submit" class="btn" id="myprofile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil Saya</button>
-                </form>
-            </div>
-
-            <!-- TAB: PROFIL SITUS (khusus admin, tampil di beranda) -->
-            <div id="tab-profile" class="tab-pane" data-admin-only="true">
-                <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:1rem;">Profil ini tampil sebagai identitas situs di halaman beranda (Tentang Situs), terpisah dari profil pribadi tiap penulis.</p>
+            <!-- TAB: PROFIL -->
+            <div id="tab-profile" class="tab-pane">
                 <form onsubmit="saveProfile(event)">
                     <div class="form-group">
                         <span class="lbl" style="display:block;font-size:.82rem;color:var(--text-secondary);margin-bottom:.6rem;font-weight:500;">Foto Profil</span>
@@ -326,14 +387,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="lbl" for="profile-name">Nama Situs/Penulis Utama</label>
-                        <input type="text" id="profile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di beranda">
+                        <label class="lbl" for="profile-name">Nama Penulis</label>
+                        <input type="text" id="profile-name" class="form-control" required maxlength="60" placeholder="Nama yang tampil di setiap tulisan">
                     </div>
                     <div class="form-group">
                         <label class="lbl" for="profile-bio">Bio Singkat (opsional)</label>
                         <input type="text" id="profile-bio" class="form-control" maxlength="160" placeholder="Misalnya: Mahasiswa yang gemar menelusuri filsafat dan sains">
                     </div>
-                    <button type="submit" class="btn" id="profile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil Situs</button>
+                    <button type="submit" class="btn" id="profile-btn"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil</button>
                 </form>
             </div>
         </section>
@@ -341,6 +402,11 @@
         <!-- MAIN CONTENT -->
         <main id="main-content">
             <div id="author-strip"></div>
+
+            <div class="suggested-wrap" id="suggested-wrap" style="display:none;">
+                <div class="suggested-title">Saran Tulisan Untuk Anda</div>
+                <div class="suggested-row" id="suggested-row"></div>
+            </div>
 
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
@@ -367,6 +433,28 @@
                 <div id="view-content" class="article-content"></div>
                 <div id="view-author-card"></div>
             </article>
+
+            <!-- HALAMAN PROFIL PENGGUNA -->
+            <section id="user-profile-view" class="user-profile-view">
+                <div class="back-btn" onclick="showHome()">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke beranda
+                </div>
+                <div class="profile-header">
+                    <span id="pv-avatar"></span>
+                    <div class="pinfo">
+                        <div class="pname" id="pv-name"></div>
+                        <div class="puname" id="pv-username"></div>
+                        <div class="pbio" id="pv-bio"></div>
+                        <div class="profile-stats">
+                            <span><strong id="pv-following-count">0</strong> Mengikuti</span>
+                            <span><strong id="pv-followers-count">0</strong> Pengikut</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions" id="pv-actions"></div>
+                </div>
+                <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--text-secondary);">Tulisan</h3>
+                <section id="user-profile-articles" class="article-list"></section>
+            </section>
         </main>
 
         <footer>
@@ -374,44 +462,69 @@
         </footer>
     </div>
 
-    <!-- LOGIN / DAFTAR MODAL -->
+    <!-- MODAL MASUK -->
     <div class="modal-overlay" id="login-modal">
-        <div class="modal-box">
-            <div class="admin-tabs" style="margin-bottom:1.2rem;">
-                <button type="button" class="tab-btn active" id="auth-tab-login" onclick="switchAuthTab('login')">Masuk</button>
-                <button type="button" class="tab-btn" id="auth-tab-register" onclick="switchAuthTab('register')">Daftar Akun</button>
+        <div class="modal-box" style="max-width:380px;text-align:center;">
+            <div id="pane-google-login">
+                <i class="fa-solid fa-book-open" style="font-size:2rem;color:var(--gold);margin-bottom:0.8rem;"></i>
+                <h3 style="margin-bottom:1.4rem;">Masuk</h3>
+                <button type="button" class="btn" id="google-login-btn" onclick="signInWithGoogle()" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;">
+                    <i class="fa-brands fa-google"></i> Masuk dengan Google
+                </button>
             </div>
 
-            <form id="login-form" onsubmit="handleLogin(event)">
-                <h3 style="margin-bottom: 1rem;">Masuk ke Akun</h3>
-                <div class="form-group">
-                    <label class="lbl" for="login-email">Email</label>
-                    <input type="email" id="login-email" class="form-control" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label class="lbl" for="login-password">Password</label>
-                    <input type="password" id="login-password" class="form-control" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn" id="login-btn">Masuk</button>
-            </form>
+            <!-- Muncul sekali saja: lengkapi username setelah login Google pertama kali -->
+            <div id="pane-complete-profile" style="display:none;text-align:left;">
+                <h3 style="margin-bottom:0.3rem;text-align:center;">Satu langkah lagi</h3>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.2rem;text-align:center;">Pilih username supaya pengguna lain bisa menemukan kamu.</p>
+                <form onsubmit="handleCompleteProfile(event)">
+                    <div class="form-group">
+                        <label class="lbl" for="setup-displayname">Nama Tampilan</label>
+                        <input type="text" id="setup-displayname" class="form-control" required maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="lbl" for="setup-username">Username</label>
+                        <input type="text" id="setup-username" class="form-control" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="huruf kecil, angka, tanpa spasi">
+                        <small>Dipakai untuk dicari pengguna lain. ID unik kamu dibuat otomatis dari akun Google.</small>
+                    </div>
+                    <button type="submit" class="btn" id="complete-profile-btn">Selesai, Mulai!</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-            <form id="register-form" onsubmit="handleRegister(event)" style="display:none;">
-                <h3 style="margin-bottom: 1rem;">Buat Akun Baru</h3>
-                <div class="form-group">
-                    <label class="lbl" for="reg-name">Nama</label>
-                    <input type="text" id="reg-name" class="form-control" required maxlength="60" placeholder="Nama yang akan tampil di tulisan Anda">
-                </div>
-                <div class="form-group">
-                    <label class="lbl" for="reg-email">Email</label>
-                    <input type="email" id="reg-email" class="form-control" required autocomplete="username">
-                </div>
-                <div class="form-group">
-                    <label class="lbl" for="reg-password">Password</label>
-                    <input type="password" id="reg-password" class="form-control" required minlength="6" autocomplete="new-password">
-                    <small>Minimal 6 karakter.</small>
-                </div>
-                <button type="submit" class="btn" id="register-btn">Daftar & Masuk</button>
-            </form>
+    <!-- MODAL CARI PENGGUNA -->
+    <div class="modal-overlay" id="search-user-modal">
+        <div class="modal-box" style="max-width:440px;">
+            <h3 style="margin-bottom:1rem;">Cari Pengguna</h3>
+            <div class="search-box-row">
+                <input type="text" id="user-search-input" class="form-control" placeholder="Cari berdasarkan username atau ID...">
+                <button type="button" class="btn btn-gold" style="width:auto;" onclick="runUserSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div id="user-search-results"></div>
+            <button type="button" class="btn btn-secondary" onclick="closeUserSearch()">Tutup</button>
+        </div>
+    </div>
+
+    <!-- TOMBOL & PANEL CHAT -->
+    <button class="chat-fab" id="chat-fab" onclick="openChatPanel()" title="Pesan">
+        <i class="fa-solid fa-comments"></i>
+        <span class="badge-dot" id="chat-badge-dot"></span>
+    </button>
+
+    <div class="chat-panel" id="chat-panel">
+        <div class="chat-panel-head">
+            <button type="button" id="chat-back-btn" style="display:none;" onclick="showChatList()"><i class="fa-solid fa-arrow-left"></i></button>
+            <span class="ttl" id="chat-panel-title">Pesan</span>
+            <button type="button" onclick="closeChatPanel()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-list" id="chat-list"></div>
+        <div class="chat-thread" id="chat-thread">
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter'){sendChatMessage();}">
+                <button type="button" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -428,14 +541,11 @@
             measurementId: "G-PS7VDLM637"
         };
 
-        // Inisialisasi Firebase, Firestore & Auth
+        // Inisialisasi Firebase & Firestore
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-
-        // Email akun yang otomatis mendapat peran Admin saat mendaftar.
-        // GANTI nilai ini dengan email yang ingin Anda jadikan Admin situs.
-        const ADMIN_EMAIL = "michoahmad02@gmail.com";
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
 
         // ---------- State ----------
         const DEFAULT_CATEGORIES = ['Filsafat', 'Filsafat Sains', 'Catatan Bebas'];
@@ -443,18 +553,62 @@
 
         let articles = [];
         let categories = [...DEFAULT_CATEGORIES];
-        let profile = { name: '', bio: '', photo: '' }; // profil situs (khusus admin, tampil di beranda)
-        let currentUser = null;       // objek Firebase Auth user yang sedang login
-        let currentUserData = null;   // { name, bio, photo, role } dari koleksi 'users'
+        let profile = { name: '', bio: '', photo: '' }; // profil admin lama (artikel tanpa authorId)
         let activeCategory = 'All';
 
-        function isAdmin() { return !!(currentUserData && currentUserData.role === 'admin'); }
+        // ---------- Akun & sosial ----------
+        const ADMIN_USERNAME = 'michoahmad02'; // disimpan untuk kompatibilitas data lama
+        const ADMIN_EMAIL = 'michoahmad02@gmail.com'; // status admin sekarang ditentukan dari email Google ini
+        let currentAuthEmail = '';
+        let legacyMigrated = false;
+        let usersMap = {};              // id -> {id, username, displayName, bio, photo}
+        let currentUser = null;         // user yang sedang login (dari usersMap)
+        let currentUserId = '';         // diisi oleh Firebase Auth (onAuthStateChanged), bukan localStorage lagi
+        let pendingGoogleAccount = null; // data Google sementara, dipakai saat lengkapi profil pertama kali
+        let followingSet = new Set();   // id yang DIIKUTI currentUser
+        let followerSet = new Set();    // id yang MENGIKUTI currentUser
+        let isAdminLoggedIn = false;    // true jika currentUser adalah akun admin
+        let unsubFollowing = null, unsubFollowers = null;
+        let activeChatWith = '';        // id lawan bicara chat yang sedang dibuka
+        let unsubChatMsgs = null;
+
+        function isAdminUser(u) { return !!u && (u.email === ADMIN_EMAIL || u.username === ADMIN_USERNAME); }
+
+        // Pindahkan otomatis tulisan lama (yang belum punya authorId) ke akun admin,
+        // begitu admin (dikenali lewat email Google) berhasil login. Jalan sekali saja.
+        function migrateLegacyArticlesIfAdmin() {
+            if (legacyMigrated || !isAdminLoggedIn || !currentUser) return;
+            const legacy = articles.filter(a => !a.authorId);
+            if (!legacy.length) { legacyMigrated = true; return; }
+            legacyMigrated = true;
+            const batch = db.batch();
+            legacy.forEach(a => {
+                batch.update(db.collection('articles').doc(a.id), {
+                    authorId: currentUser.id,
+                    authorName: currentUser.displayName || currentUser.username,
+                    authorPhoto: currentUser.photo || ''
+                });
+            });
+            batch.commit().catch(err => {
+                legacyMigrated = false;
+                console.error('Gagal memindahkan tulisan lama ke akun admin:', err);
+            });
+        }
+        function genRandomId() {
+            return Math.random().toString(36).slice(2, 7) + Math.random().toString(36).slice(2, 5);
+        }
+        function uAvatarHTML(u, size = 'md', ring = false) {
+            const cls = `avatar ${size}${ring ? ' avatar-ring' : ''}`;
+            const nm = (u && (u.displayName || u.username)) || '?';
+            if (u && u.photo) return `<img class="${cls}" src="${u.photo}" alt="${esc(nm)}">`;
+            return `<span class="${cls}">${esc(nm.charAt(0).toUpperCase())}</span>`;
+        }
 
         // state form
         let formCover = '';
         let formImages = [];      // [{id, src}]
         let profilePhotoDraft = '';
-        let myProfilePhotoDraft = '';
+        let avatarDirty = false;  // true = foto draft lagi diubah, jangan ditimpa data server dulu
 
         // ---------- Helpers ----------
         function esc(s) {
@@ -465,18 +619,6 @@
             const cls = `avatar ${size}${ring ? ' avatar-ring' : ''}`;
             if (profile.photo) return `<img class="${cls}" src="${profile.photo}" alt="${esc(authorName())}">`;
             return `<span class="${cls}">${esc(authorName().charAt(0).toUpperCase())}</span>`;
-        }
-        // Penulis suatu tulisan (denormalized di dokumen artikel).
-        // Untuk tulisan lama (sebelum fitur akun ditambahkan), jatuhkan ke profil situs.
-        function articleAuthorName(art) { return art.authorName || authorName(); }
-        function articleAuthorHTML(art, size = 'md') {
-            if (art.authorName) {
-                const cls = `avatar ${size}`;
-                return art.authorPhoto
-                    ? `<img class="${cls}" src="${art.authorPhoto}" alt="${esc(art.authorName)}">`
-                    : `<span class="${cls}">${esc(art.authorName.charAt(0).toUpperCase())}</span>`;
-            }
-            return avatarHTML(size);
         }
         function stripForText(text) {
             return (text || '').replace(/\[gambar:\w+\]/g, ' ').replace(/<[^>]*>/g, ' ');
@@ -541,6 +683,7 @@
             articles = [];
             snapshot.forEach((doc) => articles.push({ id: doc.id, ...doc.data() }));
             renderArticles();
+            migrateLegacyArticlesIfAdmin();
         }, (error) => console.error('Gagal terhubung ke Firestore:', error));
 
         db.collection('settings').doc('categories').onSnapshot((doc) => {
@@ -555,97 +698,430 @@
         db.collection('settings').doc('profile').onSnapshot((doc) => {
             const d = doc.exists ? doc.data() : {};
             profile = { name: d.name || '', bio: d.bio || '', photo: d.photo || '' };
-            renderProfileEverywhere();
             renderArticles();
         }, (error) => console.error('Gagal memuat profil:', error));
 
-        // ---------- Auth listener ----------
-        auth.onAuthStateChanged(async (user) => {
-            currentUser = user;
-            if (user) {
-                try {
-                    const ref = db.collection('users').doc(user.uid);
-                    const snap = await ref.get();
-                    if (snap.exists) {
-                        currentUserData = snap.data();
-                    } else {
-                        // dokumen profil belum ada (mis. gagal tersimpan saat pendaftaran) -> buat ulang sekarang
-                        const role = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) ? 'admin' : 'user';
-                        currentUserData = { name: user.email, bio: '', photo: '', role };
-                        await ref.set({ ...currentUserData, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    }
-                } catch (err) {
-                    console.error('Gagal memuat/menulis profil akun:', err);
-                    currentUserData = { name: user.email, bio: '', photo: '', role: 'user' };
-                }
-            } else {
-                currentUserData = null;
+        // Semua pengguna (buat tampilkan nama/foto penulis, pencarian, dsb)
+        db.collection('users').onSnapshot((snapshot) => {
+            usersMap = {};
+            snapshot.forEach(doc => { usersMap[doc.id] = { id: doc.id, ...doc.data() }; });
+            if (currentUserId && usersMap[currentUserId]) {
+                currentUser = usersMap[currentUserId];
+                isAdminLoggedIn = (currentAuthEmail === ADMIN_EMAIL) || isAdminUser(currentUser);
             }
-            renderAuthUI();
-            renderMyProfileForm();
+            renderUserTrigger();
             renderArticles();
-        });
+            renderSuggested();
+            migrateLegacyArticlesIfAdmin();
+            if (document.getElementById('user-profile-view').style.display === 'block') {
+                renderUserProfileView(currentlyViewedUserId);
+            }
+        }, (error) => console.error('Gagal memuat pengguna:', error));
+
+        function startSocialListeners() {
+            if (unsubFollowing) unsubFollowing();
+            if (unsubFollowers) unsubFollowers();
+            followingSet = new Set();
+            followerSet = new Set();
+            if (!currentUserId) return;
+            unsubFollowing = db.collection('follows').where('followerId', '==', currentUserId).onSnapshot(snap => {
+                followingSet = new Set(snap.docs.map(d => d.data().followedId));
+                updateChatFab();
+                if (document.getElementById('chat-panel').classList.contains('active')) loadChatList();
+            });
+            unsubFollowers = db.collection('follows').where('followedId', '==', currentUserId).onSnapshot(snap => {
+                followerSet = new Set(snap.docs.map(d => d.data().followerId));
+                updateChatFab();
+                if (document.getElementById('chat-panel').classList.contains('active')) loadChatList();
+            });
+        }
+        startSocialListeners();
 
         function settingsError(err) {
             alert('Gagal menyimpan: ' + err.message + '\n\nPastikan aturan Firestore mengizinkan tulis ke koleksi "settings".');
         }
 
         // ---------- Render ----------
-        // Menampilkan status login (akun) di tombol header, dan menyembunyikan
-        // tab/fitur khusus Admin dari penulis biasa.
-        function renderAuthUI() {
-            const trigger = document.getElementById('admin-trigger');
-            const av = document.getElementById('admin-trigger-avatar');
-            const label = document.getElementById('admin-trigger-label');
-            if (currentUser) {
-                const name = (currentUserData && currentUserData.name) || currentUser.email;
-                av.innerHTML = (currentUserData && currentUserData.photo)
-                    ? `<img class="avatar sm" src="${currentUserData.photo}" alt="${esc(name)}">`
-                    : `<span class="avatar sm">${esc((name || 'U').charAt(0).toUpperCase())}</span>`;
-                trigger.classList.remove('no-avatar');
-                label.textContent = name;
-            } else {
-                av.innerHTML = '';
-                trigger.classList.add('no-avatar');
-                label.textContent = 'Masuk';
-                document.getElementById('admin-panel').style.display = 'none';
-            }
-            document.querySelectorAll('[data-admin-only]').forEach(el => {
-                el.style.display = isAdmin() ? '' : 'none';
-            });
-            const panelTitle = document.getElementById('panel-title');
-            if (panelTitle) panelTitle.innerText = isAdmin() ? 'Panel Admin' : 'Panel Penulis';
-        }
-
-        function renderProfileEverywhere() {
-            // kartu penulis di beranda (profil situs)
-            const strip = document.getElementById('author-strip');
-            strip.innerHTML = (profile.name || profile.photo) ? `
-                <div class="author-strip">
-                    ${avatarHTML('lg', true)}
-                    <div>
-                        <div class="name">${esc(authorName())}</div>
-                        ${profile.bio ? `<div class="bio">${esc(profile.bio)}</div>` : ''}
-                    </div>
-                </div>` : '';
-            // form profil
-            if (document.activeElement !== document.getElementById('profile-name')) {
-                document.getElementById('profile-name').value = profile.name;
-            }
-            if (document.activeElement !== document.getElementById('profile-bio')) {
-                document.getElementById('profile-bio').value = profile.bio;
-            }
-            profilePhotoDraft = profile.photo;
-            renderProfilePreview();
-        }
+        // Beranda tidak lagi punya satu "penulis global" — strip disembunyikan,
+        // digantikan oleh bagian "Saran Tulisan" + halaman profil tiap pengguna.
+        document.getElementById('author-strip').style.display = 'none';
 
         function renderProfilePreview() {
-            const name = document.getElementById('profile-name').value || profile.name || 'P';
+            const name = document.getElementById('profile-name').value || (currentUser && currentUser.displayName) || 'P';
             const el = document.getElementById('profile-preview');
             el.innerHTML = profilePhotoDraft
                 ? `<img class="avatar xl avatar-ring" src="${profilePhotoDraft}" alt="Foto profil">`
                 : `<span class="avatar xl avatar-ring">${esc(name.charAt(0).toUpperCase())}</span>`;
             document.getElementById('avatar-remove').style.display = profilePhotoDraft ? 'inline-block' : 'none';
+        }
+
+        // ---------- Header: tombol akun ----------
+        function renderUserTrigger() {
+            const trigger = document.getElementById('user-trigger');
+            const av = document.getElementById('user-trigger-avatar');
+            const label = document.getElementById('user-trigger-label');
+            const catMenuItem = document.getElementById('admin-cat-menu-item');
+            const catTabBtn = document.getElementById('tab-cats-btn');
+
+            if (currentUser) {
+                av.innerHTML = uAvatarHTML(currentUser, 'sm');
+                trigger.classList.remove('no-avatar');
+                label.textContent = currentUser.displayName || currentUser.username;
+                document.getElementById('user-menu-head').innerHTML = `
+                    ${uAvatarHTML(currentUser, 'md')}
+                    <div><div class="dname">${esc(currentUser.displayName || currentUser.username)}</div>
+                    <div class="uname">@${esc(currentUser.username)} · <span class="id-chip">${esc(currentUser.id)}</span></div></div>`;
+                catMenuItem.style.display = isAdminLoggedIn ? 'flex' : 'none';
+                catTabBtn.style.display = isAdminLoggedIn ? 'inline-flex' : 'none';
+                if (document.activeElement !== document.getElementById('profile-name')) {
+                    document.getElementById('profile-name').value = currentUser.displayName || '';
+                }
+                if (document.activeElement !== document.getElementById('profile-bio')) {
+                    document.getElementById('profile-bio').value = currentUser.bio || '';
+                }
+                if (!avatarDirty) profilePhotoDraft = currentUser.photo || '';
+                renderProfilePreview();
+                updateChatFab();
+            } else {
+                av.innerHTML = '';
+                trigger.classList.add('no-avatar');
+                label.textContent = 'Masuk';
+                document.getElementById('user-menu').classList.remove('active');
+                document.getElementById('chat-fab').classList.remove('show');
+            }
+        }
+
+        function handleUserTriggerClick() {
+            if (!currentUser) { document.getElementById('login-modal').classList.add('active'); return; }
+            document.getElementById('user-menu').classList.toggle('active');
+        }
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('user-menu');
+            const trig = document.getElementById('user-trigger');
+            if (menu.classList.contains('active') && !menu.contains(e.target) && !trig.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // ---------- Masuk dengan Google ----------
+        function signInWithGoogle() {
+            const btn = document.getElementById('google-login-btn');
+            btn.disabled = true;
+            auth.signInWithPopup(googleProvider)
+                .catch(err => {
+                    if (err.code === 'auth/popup-blocked') {
+                        alert('Jendela pop-up diblokir browser. Izinkan pop-up untuk situs ini, lalu coba lagi.');
+                    } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+                        alert('Gagal masuk dengan Google: ' + err.message);
+                    }
+                })
+                .finally(() => { btn.disabled = false; });
+        }
+
+        // Dipanggil otomatis setiap status login Google berubah (termasuk saat halaman dibuka)
+        auth.onAuthStateChanged((fbUser) => {
+            if (!fbUser) {
+                currentUserId = ''; currentUser = null; isAdminLoggedIn = false; pendingGoogleAccount = null;
+                currentAuthEmail = ''; legacyMigrated = false;
+                startSocialListeners();
+                renderUserTrigger();
+                renderArticles();
+                return;
+            }
+            currentAuthEmail = fbUser.email || '';
+            db.collection('users').doc(fbUser.uid).get().then(doc => {
+                if (doc.exists) {
+                    // sudah pernah setup profil sebelumnya
+                    currentUserId = fbUser.uid;
+                    document.getElementById('login-modal').classList.remove('active');
+                    startSocialListeners();
+                } else {
+                    // login Google pertama kali: minta pilih username dulu
+                    pendingGoogleAccount = { uid: fbUser.uid, name: fbUser.displayName || '', photo: fbUser.photoURL || '', email: fbUser.email || '' };
+                    document.getElementById('setup-displayname').value = pendingGoogleAccount.name;
+                    document.getElementById('pane-google-login').style.display = 'none';
+                    document.getElementById('pane-complete-profile').style.display = 'block';
+                    document.getElementById('login-modal').classList.add('active');
+                }
+            }).catch(err => console.error('Gagal memuat profil pengguna:', err));
+        });
+
+        function handleCompleteProfile(e) {
+            e.preventDefault();
+            if (!pendingGoogleAccount) return;
+            const displayName = document.getElementById('setup-displayname').value.trim();
+            const username = document.getElementById('setup-username').value.trim().toLowerCase().replace(/[^a-z0-9_.]/g, '');
+            if (!username) { alert('Username hanya boleh huruf kecil, angka, titik, atau garis bawah.'); return; }
+
+            const btn = document.getElementById('complete-profile-btn');
+            btn.disabled = true;
+
+            db.collection('users').where('username', '==', username).limit(1).get()
+                .then(snap => {
+                    if (!snap.empty) { alert('Username sudah dipakai, coba yang lain.'); btn.disabled = false; return null; }
+                    return db.collection('users').doc(pendingGoogleAccount.uid).set({
+                        username, displayName: displayName || username,
+                        bio: '', photo: pendingGoogleAccount.photo || '', email: pendingGoogleAccount.email || '',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then((res) => {
+                    if (res === null) return;
+                    currentUserId = pendingGoogleAccount.uid;
+                    pendingGoogleAccount = null;
+                    document.getElementById('login-modal').classList.remove('active');
+                    document.getElementById('pane-complete-profile').style.display = 'none';
+                    document.getElementById('pane-google-login').style.display = 'block';
+                    startSocialListeners();
+                })
+                .catch(err => alert('Gagal menyimpan profil: ' + err.message))
+                .finally(() => { btn.disabled = false; });
+        }
+
+        function logoutUser() {
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('user-menu').classList.remove('active');
+            closeChatPanel();
+            resetForm();
+            auth.signOut();
+            showHome();
+        }
+
+        function requireLogin() {
+            if (currentUser) return true;
+            document.getElementById('user-menu').classList.remove('active');
+            document.getElementById('pane-google-login').style.display = 'block';
+            document.getElementById('pane-complete-profile').style.display = 'none';
+            document.getElementById('login-modal').classList.add('active');
+            return false;
+        }
+
+        function openOwnProfile() {
+            document.getElementById('user-menu').classList.remove('active');
+            if (!requireLogin()) return;
+            openUserProfile(currentUser.id);
+        }
+        function openWritePanel() {
+            document.getElementById('user-menu').classList.remove('active');
+            if (!requireLogin()) return;
+            resetForm();
+            switchTab('tab-post');
+            toggleAdminPanel(true);
+        }
+        function openCategoryPanel() {
+            document.getElementById('user-menu').classList.remove('active');
+            if (!isAdminLoggedIn) return;
+            switchTab('tab-cats');
+            toggleAdminPanel(true);
+        }
+
+        // ---------- Follow ----------
+        function followDocId(a, b) { return a + '_' + b; }
+        function isFollowing(id) { return followingSet.has(id); }
+        function isMutual(id) { return followingSet.has(id) && followerSet.has(id); }
+
+        function followUser(targetId) {
+            if (!requireLogin()) return;
+            if (targetId === currentUserId) return;
+            db.collection('follows').doc(followDocId(currentUserId, targetId)).set({
+                followerId: currentUserId, followedId: targetId, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        function unfollowUser(targetId) {
+            db.collection('follows').doc(followDocId(currentUserId, targetId)).delete();
+        }
+        function toggleFollow(targetId, btn) {
+            if (!requireLogin()) return;
+            if (isFollowing(targetId)) unfollowUser(targetId); else followUser(targetId);
+        }
+
+        // ---------- Pencarian pengguna ----------
+        function openUserSearch() {
+            document.getElementById('search-user-modal').classList.add('active');
+            document.getElementById('user-search-results').innerHTML = '';
+            document.getElementById('user-search-input').value = '';
+            document.getElementById('user-search-input').focus();
+        }
+        function closeUserSearch() { document.getElementById('search-user-modal').classList.remove('active'); }
+
+        function userResultRow(u) {
+            const following = isFollowing(u.id);
+            const isMe = currentUser && u.id === currentUser.id;
+            return `<div class="user-result-row">
+                <span onclick="openUserProfile('${u.id}')" style="cursor:pointer;">${uAvatarHTML(u, 'md')}</span>
+                <div class="uinfo" onclick="openUserProfile('${u.id}')">
+                    <div class="dname">${esc(u.displayName || u.username)}</div>
+                    <div class="uname">@${esc(u.username)} · ${esc(u.id)}</div>
+                </div>
+                ${isMe ? '' : `<button type="button" class="follow-btn small ${following ? 'following' : ''}" onclick="toggleFollow('${u.id}')">${following ? 'Mengikuti' : 'Ikuti'}</button>`}
+            </div>`;
+        }
+
+        function runUserSearch() {
+            const q = document.getElementById('user-search-input').value.trim();
+            const box = document.getElementById('user-search-results');
+            if (!q) { box.innerHTML = ''; return; }
+            box.innerHTML = '<p class="empty-note">Mencari...</p>';
+            const qLower = q.toLowerCase();
+            let byId;
+            try {
+                byId = db.collection('users').doc(q).get();
+            } catch (err) {
+                byId = Promise.resolve({ exists: false });
+            }
+            const byUsername = db.collection('users')
+                .where('username', '>=', qLower).where('username', '<=', qLower + '\uf8ff').limit(10).get();
+            Promise.all([byId, byUsername]).then(([idDoc, unameSnap]) => {
+                const results = new Map();
+                if (idDoc.exists) results.set(idDoc.id, { id: idDoc.id, ...idDoc.data() });
+                unameSnap.forEach(d => results.set(d.id, { id: d.id, ...d.data() }));
+                if (results.size === 0) { box.innerHTML = '<p class="empty-note">Tidak ada pengguna ditemukan.</p>'; return; }
+                box.innerHTML = Array.from(results.values()).map(userResultRow).join('');
+            }).catch(err => { box.innerHTML = `<p class="empty-note">Gagal mencari: ${esc(err.message)}</p>`; });
+        }
+
+        // ---------- Halaman profil pengguna ----------
+        let currentlyViewedUserId = '';
+        function openUserProfile(id) {
+            currentlyViewedUserId = id;
+            closeUserSearch();
+            document.getElementById('full-article').style.display = 'none';
+            document.getElementById('search-input').parentElement.style.display = 'none';
+            document.getElementById('suggested-wrap').style.display = 'none';
+            document.getElementById('article-list').style.display = 'none';
+            document.getElementById('user-profile-view').style.display = 'block';
+            renderUserProfileView(id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderUserProfileView(id) {
+            const u = usersMap[id];
+            if (!u) { document.getElementById('pv-name').textContent = 'Pengguna tidak ditemukan'; return; }
+            document.getElementById('pv-avatar').innerHTML = uAvatarHTML(u, 'xl', true);
+            document.getElementById('pv-name').textContent = u.displayName || u.username;
+            document.getElementById('pv-username').textContent = '@' + u.username + ' · ID: ' + u.id;
+            document.getElementById('pv-bio').textContent = u.bio || '';
+
+            db.collection('follows').where('followerId', '==', id).get().then(s => document.getElementById('pv-following-count').textContent = s.size);
+            db.collection('follows').where('followedId', '==', id).get().then(s => document.getElementById('pv-followers-count').textContent = s.size);
+
+            const actions = document.getElementById('pv-actions');
+            if (currentUser && currentUser.id === id) {
+                actions.innerHTML = `<button type="button" class="follow-btn" onclick="openWritePanel()"><i class="fa-solid fa-pen-nib"></i> Tulis Esai</button>`;
+            } else {
+                const following = isFollowing(id);
+                const mutual = isMutual(id);
+                actions.innerHTML = `
+                    <button type="button" class="follow-btn ${following ? 'following' : ''}" onclick="toggleFollow('${id}'); setTimeout(()=>renderUserProfileView('${id}'),150);">${following ? '<i class="fa-solid fa-check"></i> Mengikuti' : '<i class="fa-solid fa-plus"></i> Ikuti'}</button>
+                    ${mutual ? `<button type="button" class="chat-btn" onclick="openChatPanel(); openChatThread('${id}');"><i class="fa-solid fa-comment"></i> Kirim Pesan</button>` : ''}
+                `;
+                if (currentUser && !mutual) {
+                    actions.insertAdjacentHTML('beforeend', `<div class="locked-note" style="width:100%;"><i class="fa-solid fa-lock"></i> Chat terbuka setelah kalian saling mengikuti.</div>`);
+                }
+            }
+
+            const list = articles.filter(a => a.authorId === id);
+            const container = document.getElementById('user-profile-articles');
+            container.innerHTML = '';
+            if (list.length === 0) {
+                container.innerHTML = '<p class="empty-note">Belum ada tulisan.</p>';
+                return;
+            }
+            list.forEach(art => container.appendChild(buildArticleCard(art)));
+        }
+
+        // ---------- Saran tulisan di beranda ----------
+        function renderSuggested() {
+            const wrap = document.getElementById('suggested-wrap');
+            const row = document.getElementById('suggested-row');
+            if (!articles.length) { wrap.style.display = 'none'; return; }
+            const pool = articles.filter(a => !currentUser || a.authorId !== currentUser.id);
+            const picks = [...pool].sort(() => Math.random() - 0.5).slice(0, 6);
+            if (!picks.length) { wrap.style.display = 'none'; return; }
+            wrap.style.display = 'block';
+            row.innerHTML = picks.map(art => {
+                const au = (art.authorId && usersMap[art.authorId]) || null;
+                const authorName = au ? (au.displayName || au.username) : (profile.name || 'Penulis');
+                return `<div class="suggested-card" onclick="openArticle('${art.id}')">
+                    <div class="scat">${esc(art.category)}</div>
+                    <div class="stitle">${esc(art.title)}</div>
+                    <div class="sauthor">${au ? uAvatarHTML(au, 'sm') : avatarHTML('sm')} ${esc(authorName)}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ---------- Chat (khusus saling follow) ----------
+        function updateChatFab() {
+            document.getElementById('chat-fab').classList.toggle('show', !!currentUser);
+        }
+        function mutualList() {
+            return Array.from(followingSet).filter(id => followerSet.has(id)).map(id => usersMap[id]).filter(Boolean);
+        }
+        function openChatPanel() {
+            document.getElementById('user-menu').classList.remove('active');
+            if (!requireLogin()) return;
+            document.getElementById('chat-panel').classList.add('active');
+            showChatList();
+        }
+        function closeChatPanel() {
+            document.getElementById('chat-panel').classList.remove('active');
+            if (unsubChatMsgs) { unsubChatMsgs(); unsubChatMsgs = null; }
+            activeChatWith = '';
+        }
+        function showChatList() {
+            if (unsubChatMsgs) { unsubChatMsgs(); unsubChatMsgs = null; }
+            activeChatWith = '';
+            document.getElementById('chat-back-btn').style.display = 'none';
+            document.getElementById('chat-panel-title').textContent = 'Pesan';
+            document.getElementById('chat-thread').classList.remove('active');
+            document.getElementById('chat-list').style.display = 'block';
+            loadChatList();
+        }
+        function loadChatList() {
+            const box = document.getElementById('chat-list');
+            if (document.getElementById('chat-thread').classList.contains('active')) return;
+            const list = mutualList();
+            if (!list.length) {
+                box.innerHTML = '<p class="empty-note">Belum ada teman chat.<br>Kamu bisa mengobrol dengan pengguna yang saling mengikuti denganmu.</p>';
+                return;
+            }
+            box.innerHTML = list.map(u => `
+                <div class="chat-list-item" onclick="openChatThread('${u.id}')">
+                    ${uAvatarHTML(u, 'md')}
+                    <span class="cname">${esc(u.displayName || u.username)}</span>
+                </div>`).join('');
+        }
+        function openChatThread(otherId) {
+            if (!isMutual(otherId)) { alert('Kalian harus saling mengikuti untuk mengobrol.'); return; }
+            activeChatWith = otherId;
+            const u = usersMap[otherId];
+            document.getElementById('chat-back-btn').style.display = 'inline-block';
+            document.getElementById('chat-panel-title').textContent = u ? (u.displayName || u.username) : 'Pesan';
+            document.getElementById('chat-list').style.display = 'none';
+            document.getElementById('chat-thread').classList.add('active');
+
+            const chatId = [currentUserId, otherId].sort().join('_');
+            if (unsubChatMsgs) unsubChatMsgs();
+            unsubChatMsgs = db.collection('chats').doc(chatId).collection('messages').orderBy('createdAt', 'asc')
+                .onSnapshot(snap => {
+                    const box = document.getElementById('chat-messages');
+                    box.innerHTML = snap.docs.map(d => {
+                        const m = d.data();
+                        return `<div class="chat-bubble ${m.senderId === currentUserId ? 'me' : 'them'}">${esc(m.text)}</div>`;
+                    }).join('');
+                    box.scrollTop = box.scrollHeight;
+                }, err => console.error('Gagal memuat pesan:', err));
+        }
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !activeChatWith) return;
+            if (!isMutual(activeChatWith)) { alert('Kalian harus saling mengikuti untuk mengobrol.'); return; }
+            const chatId = [currentUserId, activeChatWith].sort().join('_');
+            input.value = '';
+            db.collection('chats').doc(chatId).collection('messages').add({
+                senderId: currentUserId, text, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(err => alert('Gagal mengirim pesan: ' + err.message));
         }
 
         function renderCategoryNav() {
@@ -688,6 +1164,64 @@
             });
         }
 
+        // Info penulis satu artikel: utamakan authorId (sistem baru, multi-penulis),
+        // fallback ke profil admin lama untuk artikel lama yang belum punya authorId.
+        function articleAuthor(art, size = 'sm') {
+            if (art.authorId && usersMap[art.authorId]) {
+                const u = usersMap[art.authorId];
+                return { id: u.id, name: u.displayName || u.username, avatarHtml: uAvatarHTML(u, size, size === 'xl') };
+            }
+            if (art.authorId) {
+                const cls = `avatar ${size}${size === 'xl' ? ' avatar-ring' : ''}`;
+                return { id: art.authorId, name: art.authorName || 'Penulis', avatarHtml: art.authorPhoto ? `<img class="${cls}" src="${art.authorPhoto}" alt="">` : `<span class="${cls}">${esc((art.authorName || 'P').charAt(0).toUpperCase())}</span>` };
+            }
+            // Tulisan lama (dibuat sebelum sistem akun ada) tidak punya authorId.
+            // Tampilkan profil akun admin yang sekarang (kalau sudah pernah daftar),
+            // supaya tidak nongol foto tanpa nama.
+            const adminNow = Object.values(usersMap).find(u => u.email === ADMIN_EMAIL || u.username === ADMIN_USERNAME);
+            if (adminNow) return { id: adminNow.id, name: adminNow.displayName || adminNow.username, avatarHtml: uAvatarHTML(adminNow, size, size === 'xl') };
+            return { id: '', name: profile.name || 'Penulis', avatarHtml: avatarHTML(size, size === 'xl') };
+        }
+        function canEditArticle(art) {
+            return !!currentUser && (currentUser.id === art.authorId || isAdminLoggedIn);
+        }
+
+        function buildArticleCard(art) {
+            const readTime = calcReadTime(art.content);
+            const plain = stripForText(art.content).replace(/\s+/g, ' ').trim();
+            const excerpt = esc(plain.substring(0, 160)) + (plain.length > 160 ? '...' : '');
+            const au = articleAuthor(art);
+
+            const adminButtons = canEditArticle(art) ? `
+                <div class="admin-actions">
+                    <button class="action-btn edit" onclick="editArticle('${art.id}')" title="Edit Tulisan"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                    <button class="action-btn delete" onclick="deleteArticle('${art.id}')" title="Hapus Tulisan"><i class="fa-solid fa-trash"></i> Hapus</button>
+                </div>` : '';
+
+            const card = document.createElement('div');
+            card.className = 'article-card';
+            card.innerHTML = `
+                ${art.cover ? `<img class="card-cover" src="${art.cover}" alt="" onclick="openArticle('${art.id}')">` : ''}
+                <div class="article-meta">
+                    <span class="category">${esc(art.category)}</span>
+                    <span>•</span>
+                    <span>${esc(art.date)}</span>
+                    <span>•</span>
+                    <span>${readTime}</span>
+                    <span>•</span>
+                    <span class="by" ${au.id ? `onclick="openUserProfile('${au.id}')" style="cursor:pointer;"` : ''}>${au.avatarHtml} ${esc(au.name)}</span>
+                </div>
+                <h2 class="article-title" onclick="openArticle('${art.id}')">${esc(art.title)}</h2>
+                <p class="article-excerpt">${excerpt}</p>
+                <div class="article-footer">
+                    <div class="article-tags">
+                        ${(art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('')}
+                    </div>
+                    ${adminButtons}
+                </div>`;
+            return card;
+        }
+
         function renderArticles(dataToRender = articles) {
             const listContainer = document.getElementById('article-list');
             listContainer.innerHTML = '';
@@ -699,42 +1233,7 @@
                 listContainer.innerHTML = `<p style="color: var(--text-secondary); text-align: center; margin: 3rem 0;">Belum ada tulisan di sini.</p>`;
                 return;
             }
-
-            filtered.forEach(art => {
-                const readTime = calcReadTime(art.content);
-                const plain = stripForText(art.content).replace(/\s+/g, ' ').trim();
-                const excerpt = esc(plain.substring(0, 160)) + (plain.length > 160 ? '...' : '');
-
-                const canManage = currentUser && (isAdmin() || art.authorId === currentUser.uid);
-                const adminButtons = canManage ? `
-                    <div class="admin-actions">
-                        <button class="action-btn edit" onclick="editArticle('${art.id}')" title="Edit Tulisan"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button class="action-btn delete" onclick="deleteArticle('${art.id}')" title="Hapus Tulisan"><i class="fa-solid fa-trash"></i> Hapus</button>
-                    </div>` : '';
-
-                const card = document.createElement('div');
-                card.className = 'article-card';
-                card.innerHTML = `
-                    ${art.cover ? `<img class="card-cover" src="${art.cover}" alt="" onclick="openArticle('${art.id}')">` : ''}
-                    <div class="article-meta">
-                        <span class="category">${esc(art.category)}</span>
-                        <span>•</span>
-                        <span>${esc(art.date)}</span>
-                        <span>•</span>
-                        <span>${readTime}</span>
-                        <span>•</span>
-                        <span class="by">${articleAuthorHTML(art, 'sm')} ${esc(articleAuthorName(art))}</span>
-                    </div>
-                    <h2 class="article-title" onclick="openArticle('${art.id}')">${esc(art.title)}</h2>
-                    <p class="article-excerpt">${excerpt}</p>
-                    <div class="article-footer">
-                        <div class="article-tags">
-                            ${(art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('')}
-                        </div>
-                        ${adminButtons}
-                    </div>`;
-                listContainer.appendChild(card);
-            });
+            filtered.forEach(art => listContainer.appendChild(buildArticleCard(art)));
         }
 
         function filterCategory(cat) {
@@ -758,41 +1257,51 @@
             if (!art) return;
 
             document.getElementById('search-input').parentElement.style.display = 'none';
-            document.getElementById('author-strip').style.display = 'none';
+            document.getElementById('suggested-wrap').style.display = 'none';
             document.getElementById('article-list').style.display = 'none';
+            document.getElementById('user-profile-view').style.display = 'none';
+
+            const au = articleAuthor(art, 'md');
+            const auXl = articleAuthor(art, 'xl');
+            const authorBio = (art.authorId && usersMap[art.authorId]) ? usersMap[art.authorId].bio : profile.bio;
 
             document.getElementById('view-category').innerText = art.category;
             document.getElementById('view-date').innerText = art.date;
             document.getElementById('view-readtime').innerText = calcReadTime(art.content);
             document.getElementById('view-title').innerText = art.title;
             document.getElementById('view-content').innerHTML = renderContent(art);
-            document.getElementById('view-byline').innerHTML = `${articleAuthorHTML(art, 'md')} <span>Ditulis oleh <strong>${esc(articleAuthorName(art))}</strong></span>`;
+            document.getElementById('view-byline').innerHTML = `
+                <span ${au.id ? `onclick="openUserProfile('${au.id}')" style="cursor:pointer;display:inline-flex;align-items:center;gap:0.5rem;"` : ''}>
+                    ${au.avatarHtml} <span>Ditulis oleh <strong>${esc(au.name)}</strong></span>
+                </span>`;
             document.getElementById('view-tags').innerHTML = (art.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
 
             const cover = document.getElementById('view-cover');
             if (art.cover) { cover.src = art.cover; cover.style.display = 'block'; } else { cover.style.display = 'none'; }
 
             document.getElementById('view-author-card').innerHTML = `
-                <div class="author-card">
-                    ${articleAuthorHTML(art, 'xl')}
+                <div class="author-card" ${au.id ? `onclick="openArticleAuthorProfile('${au.id}')" style="cursor:pointer;"` : ''}>
+                    ${auXl.avatarHtml}
                     <div>
                         <div class="label">Penulis</div>
-                        <div class="name">${esc(articleAuthorName(art))}</div>
-                        ${(art.authorBio || (!art.authorId && profile.bio)) ? `<div class="bio">${esc(art.authorBio || profile.bio)}</div>` : ''}
+                        <div class="name">${esc(au.name)}</div>
+                        ${authorBio ? `<div class="bio">${esc(authorBio)}</div>` : ''}
                     </div>
                 </div>`;
 
             document.getElementById('full-article').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+        function openArticleAuthorProfile(id) { openUserProfile(id); }
 
         function showHome() {
             document.getElementById('full-article').style.display = 'none';
+            document.getElementById('user-profile-view').style.display = 'none';
             document.getElementById('search-input').parentElement.style.display = 'block';
-            document.getElementById('author-strip').style.display = 'block';
             document.getElementById('article-list').style.display = 'flex';
             document.getElementById('search-input').value = '';
             renderArticles();
+            renderSuggested();
         }
 
         // ---------- Tema ----------
@@ -807,178 +1316,49 @@
             applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         });
 
-        // ---------- Akun / Login ----------
-        function handleAdminClick() {
-            if (currentUser) toggleAdminPanel();
-            else { switchAuthTab('login'); document.getElementById('login-modal').classList.add('active'); }
-        }
-        document.getElementById('admin-trigger').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleAdminClick(); }
+        document.getElementById('user-trigger').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleUserTriggerClick(); }
         });
 
-        function switchAuthTab(which) {
-            document.getElementById('login-form').style.display = which === 'login' ? 'block' : 'none';
-            document.getElementById('register-form').style.display = which === 'register' ? 'block' : 'none';
-            document.getElementById('auth-tab-login').classList.toggle('active', which === 'login');
-            document.getElementById('auth-tab-register').classList.toggle('active', which === 'register');
-        }
-
-        function authErrorMessage(err) {
-            const map = {
-                'auth/email-already-in-use': 'Email sudah terdaftar. Silakan masuk.',
-                'auth/invalid-email': 'Format email tidak valid.',
-                'auth/weak-password': 'Password terlalu lemah (minimal 6 karakter).',
-                'auth/user-not-found': 'Email tidak ditemukan.',
-                'auth/wrong-password': 'Password salah.',
-                'auth/invalid-credential': 'Email atau password salah.',
-                'auth/too-many-requests': 'Terlalu banyak percobaan gagal. Coba lagi nanti.'
-            };
-            return map[err.code] || err.message;
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const btn = document.getElementById('login-btn');
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-password').value;
-            btn.disabled = true;
-            try {
-                await auth.signInWithEmailAndPassword(email, pass);
-                document.getElementById('login-modal').classList.remove('active');
-                document.getElementById('login-form').reset();
-                toggleAdminPanel();
-            } catch (err) {
-                alert('Gagal masuk: ' + authErrorMessage(err));
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        async function handleRegister(e) {
-            e.preventDefault();
-            const btn = document.getElementById('register-btn');
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const pass = document.getElementById('reg-password').value;
-            btn.disabled = true;
-            try {
-                const cred = await auth.createUserWithEmailAndPassword(email, pass);
-                const role = email.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? 'admin' : 'user';
-                await db.collection('users').doc(cred.user.uid).set({
-                    name, bio: '', photo: '', role,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                document.getElementById('login-modal').classList.remove('active');
-                document.getElementById('register-form').reset();
-                toggleAdminPanel();
-            } catch (err) {
-                alert('Gagal mendaftar: ' + authErrorMessage(err));
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        function logoutAdmin() {
-            auth.signOut().then(() => {
-                document.getElementById('admin-panel').style.display = 'none';
-                resetForm();
-                alert('Berhasil keluar.');
-            });
-        }
-
-        function toggleAdminPanel() {
+        function toggleAdminPanel(forceOpen) {
             const panel = document.getElementById('admin-panel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            if (panel.style.display === 'block') {
-                const activeBtn = document.querySelector('.tab-btn.active');
-                if (activeBtn && activeBtn.dataset.adminOnly === 'true' && !isAdmin()) switchTab('tab-post');
-                renderMyProfileForm();
-                panel.scrollIntoView({ behavior: 'smooth' });
-            }
+            const open = forceOpen === true ? true : (forceOpen === false ? false : panel.style.display !== 'block');
+            panel.style.display = open ? 'block' : 'none';
+            if (open) panel.scrollIntoView({ behavior: 'smooth' });
         }
 
         function switchTab(id) {
+            if (id === 'tab-cats' && !isAdminLoggedIn) return;
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === id));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
         }
 
-        // ---------- Profil admin ----------
+        // ---------- Profil pengguna ----------
         async function handleAvatarFile(input) {
             const file = input.files[0];
             input.value = '';
             if (!file) return;
             try {
                 profilePhotoDraft = await compressImage(file, 320, 0.85, true);
+                avatarDirty = true;
                 renderProfilePreview();
             } catch (err) { alert(err.message); }
         }
-        function removeAvatar() { profilePhotoDraft = ''; renderProfilePreview(); }
+        function removeAvatar() { profilePhotoDraft = ''; avatarDirty = true; renderProfilePreview(); }
         document.getElementById('profile-name').addEventListener('input', renderProfilePreview);
 
         function saveProfile(e) {
             e.preventDefault();
+            if (!requireLogin()) return;
             const btn = document.getElementById('profile-btn');
             btn.disabled = true;
             const data = {
-                name: document.getElementById('profile-name').value.trim(),
+                displayName: document.getElementById('profile-name').value.trim(),
                 bio: document.getElementById('profile-bio').value.trim(),
                 photo: profilePhotoDraft
             };
-            db.collection('settings').doc('profile').set(data)
-                .then(() => alert('Profil situs berhasil disimpan!'))
-                .catch(settingsError)
-                .finally(() => { btn.disabled = false; });
-        }
-
-        // ---------- Profil pribadi penulis (Profil Saya) ----------
-        function renderMyProfileForm() {
-            const nameEl = document.getElementById('myprofile-name');
-            const bioEl = document.getElementById('myprofile-bio');
-            if (!nameEl) return;
-            if (currentUserData) {
-                if (document.activeElement !== nameEl) nameEl.value = currentUserData.name || '';
-                if (document.activeElement !== bioEl) bioEl.value = currentUserData.bio || '';
-                myProfilePhotoDraft = currentUserData.photo || '';
-            } else {
-                nameEl.value = ''; bioEl.value = ''; myProfilePhotoDraft = '';
-            }
-            renderMyProfilePreview();
-        }
-        function renderMyProfilePreview() {
-            const name = document.getElementById('myprofile-name').value || (currentUserData && currentUserData.name) || 'P';
-            const el = document.getElementById('myprofile-preview');
-            el.innerHTML = myProfilePhotoDraft
-                ? `<img class="avatar xl avatar-ring" src="${myProfilePhotoDraft}" alt="Foto profil">`
-                : `<span class="avatar xl avatar-ring">${esc(name.charAt(0).toUpperCase())}</span>`;
-            document.getElementById('myprofile-avatar-remove').style.display = myProfilePhotoDraft ? 'inline-block' : 'none';
-        }
-        document.getElementById('myprofile-name').addEventListener('input', renderMyProfilePreview);
-        async function handleMyAvatarFile(input) {
-            const file = input.files[0];
-            input.value = '';
-            if (!file) return;
-            try { myProfilePhotoDraft = await compressImage(file, 320, 0.85, true); renderMyProfilePreview(); }
-            catch (err) { alert(err.message); }
-        }
-        function removeMyAvatar() { myProfilePhotoDraft = ''; renderMyProfilePreview(); }
-
-        function saveMyProfile(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-            const btn = document.getElementById('myprofile-btn');
-            btn.disabled = true;
-            const data = {
-                name: document.getElementById('myprofile-name').value.trim(),
-                bio: document.getElementById('myprofile-bio').value.trim(),
-                photo: myProfilePhotoDraft,
-                role: (currentUserData && currentUserData.role) || 'user'
-            };
-            db.collection('users').doc(currentUser.uid).set(data, { merge: true })
-                .then(() => {
-                    currentUserData = { ...currentUserData, ...data };
-                    renderAuthUI();
-                    alert('Profil Anda berhasil disimpan!');
-                })
+            db.collection('users').doc(currentUser.id).update(data)
+                .then(() => { avatarDirty = false; alert('Profil berhasil disimpan!'); })
                 .catch(settingsError)
                 .finally(() => { btn.disabled = false; });
         }
@@ -1101,10 +1481,7 @@
 
         function editArticle(id) {
             const art = articles.find(a => a.id === id);
-            if (!art) return;
-            if (art.authorId && (!currentUser || art.authorId !== currentUser.uid) && !isAdmin()) {
-                return alert('Anda tidak berhak mengedit tulisan orang lain.');
-            }
+            if (!art || !canEditArticle(art)) return;
 
             switchTab('tab-post');
             document.getElementById('edit-doc-id').value = art.id;
@@ -1127,9 +1504,7 @@
 
         function deleteArticle(id) {
             const art = articles.find(a => a.id === id);
-            if (art && art.authorId && (!currentUser || art.authorId !== currentUser.uid) && !isAdmin()) {
-                return alert('Anda tidak berhak menghapus tulisan orang lain.');
-            }
+            if (!art || !canEditArticle(art)) return;
             if (confirm('Apakah Anda yakin ingin menghapus tulisan ini secara permanen?')) {
                 db.collection('articles').doc(id).delete()
                     .then(() => alert('Artikel berhasil dihapus!'))
@@ -1139,10 +1514,11 @@
 
         function saveArticle(e) {
             e.preventDefault();
-            if (!currentUser) return alert('Anda harus masuk atau membuat akun terlebih dahulu untuk menulis.');
-
+            if (!requireLogin()) return;
             const btn = document.getElementById('submit-btn');
             const docId = document.getElementById('edit-doc-id').value;
+            const existing = docId ? articles.find(a => a.id === docId) : null;
+            if (existing && !canEditArticle(existing)) { alert('Kamu tidak punya akses untuk mengedit tulisan ini.'); return; }
 
             const title = document.getElementById('post-title').value.trim();
             const category = document.getElementById('post-category').value;
@@ -1157,18 +1533,14 @@
                 return alert('Total ukuran tulisan dan foto terlalu besar untuk satu dokumen. Kurangi jumlah foto atau pakai foto yang lebih kecil.');
             }
 
-            if (docId) {
-                const existing = articles.find(a => a.id === docId);
-                if (existing && existing.authorId && existing.authorId !== currentUser.uid && !isAdmin()) {
-                    return alert('Anda tidak berhak mengedit tulisan orang lain.');
-                }
-            }
-
             btn.disabled = true;
             btn.innerText = docId ? 'Menyimpan Perubahan...' : 'Memublikasikan...';
             const restore = () => { btn.disabled = false; };
 
-            const payload = { title, category, content, tags, cover: formCover || '', images: usedImages };
+            const payload = {
+                title, category, content, tags, cover: formCover || '', images: usedImages,
+                authorId: currentUser.id, authorName: currentUser.displayName || currentUser.username, authorPhoto: currentUser.photo || ''
+            };
 
             if (docId) {
                 db.collection('articles').doc(docId).update(payload)
@@ -1177,10 +1549,6 @@
             } else {
                 db.collection('articles').add({
                     ...payload,
-                    authorId: currentUser.uid,
-                    authorName: (currentUserData && currentUserData.name) || currentUser.email,
-                    authorPhoto: (currentUserData && currentUserData.photo) || '',
-                    authorBio: (currentUserData && currentUserData.bio) || '',
                     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 })
@@ -1194,13 +1562,18 @@
                 document.getElementById('login-modal').classList.remove('active');
             }
         });
+        document.getElementById('search-user-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('search-user-modal')) closeUserSearch();
+        });
+        document.getElementById('user-search-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); runUserSearch(); }
+        });
 
         // Render awal
         renderCategoryNav();
         fillCategorySelect();
         renderCategoryManager();
-        renderProfileEverywhere();
-        renderAuthUI();
+        renderUserTrigger();
     </script>
 </body>
 </html>
